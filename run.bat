@@ -1,1 +1,1 @@
-java -jar .\target\JavaBot.jar
+java -jar ".\target\Greedy Fox.jar"
