@@ -20,7 +20,7 @@ public class Position {
   }
 
   public void setX(int x) {
-    x = x;
+    this.x = x;
   }
 
   public int getY() {
