@@ -35,7 +35,7 @@ public class Main {
             System.out.println("Registered with the runner " + id);
 
             Position position = new Position();
-            GameObject bot = new GameObject(id, 10, 20, 0, position, ObjectTypes.PLAYER);
+            GameObject bot = new GameObject(id, 10, 20, 0, position, ObjectTypes.PLAYER, 0, 0, 0, 0, 0);
             botService.setBot(bot);
         }, UUID.class);
 
@@ -44,11 +44,13 @@ public class Main {
             gameState.world = gameStateDto.getWorld();
 
             for (Map.Entry<String, List<Integer>> objectEntry : gameStateDto.getGameObjects().entrySet()) {
-                gameState.getGameObjects().add(GameObject.FromStateList(UUID.fromString(objectEntry.getKey()), objectEntry.getValue()));
+                gameState.getGameObjects()
+                        .add(GameObject.FromStateList(UUID.fromString(objectEntry.getKey()), objectEntry.getValue()));
             }
 
             for (Map.Entry<String, List<Integer>> objectEntry : gameStateDto.getPlayerObjects().entrySet()) {
-                gameState.getPlayerGameObjects().add(GameObject.FromStateList(UUID.fromString(objectEntry.getKey()), objectEntry.getValue()));
+                gameState.getPlayerGameObjects()
+                        .add(GameObject.FromStateList(UUID.fromString(objectEntry.getKey()), objectEntry.getValue()));
             }
 
             botService.setGameState(gameState);
@@ -60,7 +62,7 @@ public class Main {
         System.out.println("Registering with the runner...");
         hubConnection.send("Register", token, "Greedy Fox");
 
-        //This is a blocking call
+        // This is a blocking call
         hubConnection.start().subscribe(() -> {
             while (hubConnection.getConnectionState() == HubConnectionState.CONNECTED) {
                 Thread.sleep(20);

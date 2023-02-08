@@ -10,7 +10,7 @@ public class PlayerAction {
   public int heading;
 
   public UUID getPlayerId() {
-    return playerId;
+    return this.playerId;
   }
 
   public void setPlayerId(UUID playerId) {
@@ -18,7 +18,7 @@ public class PlayerAction {
   }
 
   public PlayerActions getAction() {
-    return action;
+    return this.action;
   }
 
   public void setAction(PlayerActions action) {
@@ -26,7 +26,7 @@ public class PlayerAction {
   }
 
   public int getHeading() {
-    return heading;
+    return this.heading;
   }
 
   public void setHeading(int heading) {

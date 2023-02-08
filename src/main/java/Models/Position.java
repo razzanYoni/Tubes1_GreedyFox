@@ -6,8 +6,8 @@ public class Position {
   public int y;
 
   public Position() {
-    x = 0;
-    y = 0;
+    this.x = 0;
+    this.y = 0;
   }
 
   public Position(int x, int y) {
@@ -16,15 +16,15 @@ public class Position {
   }
 
   public int getX() {
-    return x;
+    return this.x;
   }
 
   public void setX(int x) {
-    x = x;
+    this.x = x;
   }
 
   public int getY() {
-    return y;
+    return this.y;
   }
 
   public void setY(int y) {

@@ -9,7 +9,7 @@ public class GameStateDto {
   private Map<String, List<Integer>> playerObjects;
 
   public Models.World getWorld() {
-    return world;
+    return this.world;
   }
 
   public void setWorld(Models.World world) {
@@ -17,7 +17,7 @@ public class GameStateDto {
   }
 
   public Map<String, List<Integer>> getGameObjects() {
-    return gameObjects;
+    return this.gameObjects;
   }
 
   public void setGameObjects(Map<String, List<Integer>> gameObjects) {
@@ -25,10 +25,10 @@ public class GameStateDto {
   }
 
   public Map<String, List<Integer>> getPlayerObjects() {
-    return playerObjects;
+    return this.playerObjects;
   }
 
   public void setPlayerObjects(Map<String, List<Integer>> playerObjects) {
-    playerObjects = playerObjects;
+    this.playerObjects = playerObjects;
   }
 }
