@@ -7,4 +7,4 @@ WORKDIR /app
 COPY ./target/ .
 
 # The entrypoint to run the bot
-ENTRYPOINT ["java", "-jar", "JavaBot.jar"]
+ENTRYPOINT ["java", "-jar", "Greedy Fox.jar"]
