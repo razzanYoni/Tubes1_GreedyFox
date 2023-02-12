@@ -7,7 +7,7 @@ import java.util.*;
 import java.util.stream.*;
 import java.lang.Math;
 
-public class Data {
+public class Data{
     /* Atribute */
     // List of Object
     private List<GameObject> threatObject = new ArrayList<GameObject>();
