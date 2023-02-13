@@ -30,7 +30,6 @@ public class Data {
 
     private Position Border;
 
-
     // Threshold
     private Double thresholdAncaman;
     private int resultanDistanceNonTeleport = 2;
@@ -72,6 +71,18 @@ public class Data {
 
     public Integer getnFoodObject() {
         return nFoodObject;
+    }
+
+    public List<GameObject> getSuperFoodObject() {
+        return superFoodObject;
+    }
+
+    public List<Double> getSuperFoodObjectDistance() {
+        return superFoodObjectDistance;
+    }
+
+    public Integer getnSuperFoodObject() {
+        return nSuperFoodObject;
     }
 
     public Position getBorderPosition() {
