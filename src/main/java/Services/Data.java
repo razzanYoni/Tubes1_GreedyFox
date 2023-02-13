@@ -7,25 +7,28 @@ import java.util.*;
 import java.util.stream.*;
 import java.lang.Math;
 
+// TO DO benerin +- di fungsi isBorderAncaman
+
 public class Data {
     /* Atribute */
     // List of Object
     private List<GameObject> threatObject = new ArrayList<GameObject>();
-    private List<Float> threatObjectDistance = new ArrayList<Float>();
+    private List<Double> threatObjectDistance = new ArrayList<Double>();
     private Integer nThreatObject = 0;
 
     private List<GameObject> threatPlayer = new ArrayList<GameObject>();
-    private List<Float> threatPlayerDistance = new ArrayList<Float>();
+    private List<Double> threatPlayerDistance = new ArrayList<Double>();
     private Integer nThreatPlayer = 0;
 
     private List<GameObject> foodObject = new ArrayList<GameObject>();
-    private List<Float> foodObjectDistance = new ArrayList<Float>();
+    private List<Double> foodObjectDistance = new ArrayList<Double>();
     private Integer nFoodObject = 0;
 
     private Position Border;
 
+
     // Threshold
-    private float thresholdAncaman;
+    private Double thresholdAncaman;
     private int resultanDistanceNonTeleport = 2;
 
     /* Method */
@@ -35,7 +38,7 @@ public class Data {
         return threatObject;
     }
 
-    public List<Float> getThreatObjectDistance() {
+    public List<Double> getThreatObjectDistance() {
         return threatObjectDistance;
     }
 
@@ -47,7 +50,7 @@ public class Data {
         return threatPlayer;
     }
 
-    public List<Float> getPlayerDistance() {
+    public List<Double> getPlayerDistance() {
         return threatPlayerDistance;
     }
 
@@ -59,7 +62,7 @@ public class Data {
         return foodObject;
     }
 
-    public List<Float> getFoodObjectDistance() {
+    public List<Double> getFoodObjectDistance() {
         return foodObjectDistance;
     }
 
@@ -74,7 +77,7 @@ public class Data {
     /* Setter */
     public void setThresholdAncaman(GameObject GreedyFox) {
         // masih coba-coba
-        this.thresholdAncaman = (float) (GreedyFox.getSize() * 1.3);
+        this.thresholdAncaman = (Double) (GreedyFox.getSize() * 100.0);
     }
 
     public void isThreatObject(GameObject self, GameObject other) {
@@ -138,10 +141,10 @@ public class Data {
         int xSelf = selfPosition.getX(), ySelf = selfPosition.getY();
         Integer radius = gameState.getWorld().getRadius();
 
-        float distanceselfCenter = (float) Math.sqrt(Math.pow(xSelf - gameState.getWorld().getCenterPoint().getX(), 2)
+        Double distanceselfCenter = (Double) Math.sqrt(Math.pow(xSelf - gameState.getWorld().getCenterPoint().getX(), 2)
                 + Math.pow(ySelf - gameState.getWorld().getCenterPoint().getY(), 2));
         ;
-        float distance = radius - distanceselfCenter;
+        Double distance = radius - distanceselfCenter;
 
         /* Menentukan Kuadran */
         if (distance < thresholdAncaman) {
@@ -157,7 +160,7 @@ public class Data {
                 if (ySelf == 0) {
                     this.Border = new Position(radius, 0);
                 } else if (ySelf > 0) {
-                    float theta = (float) Math.atan(ySelf / xSelf);
+                    Double theta = (Double) Math.atan(ySelf / xSelf);
                     int xBorder = (radius * Math.cos(theta)) - (int) radius * Math.cos(theta) >= 0.5
                             ? (int) (radius * Math.cos(theta)) + 1
                             : (int) (radius * Math.cos(theta));
@@ -166,7 +169,7 @@ public class Data {
                             : (int) (radius * Math.sin(theta));
                     this.Border = new Position(xBorder, yBorder);
                 } else if (ySelf < 0) {
-                    float theta = (float) Math.atan(ySelf / xSelf) + (float) Math.PI;
+                    Double theta = (Double) Math.atan(ySelf / xSelf) + (Double) Math.PI;
                     int xBorder = (radius * Math.cos(theta)) - (int) radius * Math.cos(theta) >= 0.5
                             ? (int) (radius * Math.cos(theta)) + 1
                             : (int) (radius * Math.cos(theta));
@@ -179,7 +182,7 @@ public class Data {
                 if (ySelf == 0) {
                     this.Border = new Position(-radius, 0);
                 } else if (ySelf > 0) {
-                    float theta = (float) Math.atan(ySelf / xSelf) + (float) Math.PI;
+                    Double theta = (Double) Math.atan(ySelf / xSelf) + (Double) Math.PI;
                     int xBorder = (radius * Math.cos(theta)) - (int) radius * Math.cos(theta) >= 0.5
                             ? (int) (radius * Math.cos(theta)) + 1
                             : (int) (radius * Math.cos(theta));
@@ -188,7 +191,7 @@ public class Data {
                             : (int) (radius * Math.sin(theta));
                     this.Border = new Position(xBorder, yBorder);
                 } else if (ySelf < 0) {
-                    float theta = (float) Math.atan(ySelf / xSelf) + (float) Math.PI * 1.5f;
+                    Double theta = (Double) Math.atan(ySelf / xSelf) + (Double) Math.PI * 1.5f;
                     int xBorder = (radius * Math.cos(theta)) - (int) radius * Math.cos(theta) >= 0.5
                             ? (int) (radius * Math.cos(theta)) + 1
                             : (int) (radius * Math.cos(theta));
@@ -198,6 +201,8 @@ public class Data {
                     this.Border = new Position(xBorder, yBorder);
                 }
             }
+        } else {
+            this.Border = null;
         }
     }
 }
