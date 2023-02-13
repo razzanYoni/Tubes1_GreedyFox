@@ -11,7 +11,7 @@ public class DefenseMode {
     private Data dataState;
     private GameObject gFox;
     private PlayerAction gFoxAction;
-    private List<GameObject> listAncaman, listEnemy; // listAncaman minimal berukuran 1, ListEnemy
+    private List<GameObject> listAncaman, listEnemy; // listAncaman minimal berukuran 1, ListEnemy bisa kosong
 
     // Constructor
     public DefenseMode(Data dataState, GameObject gFox, PlayerAction gFoxAction, List<GameObject> listAncaman,
