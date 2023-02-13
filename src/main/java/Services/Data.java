@@ -23,6 +23,10 @@ public class Data {
     private List<GameObject> foodObject = new ArrayList<GameObject>();
     private List<Double> foodObjectDistance = new ArrayList<Double>();
     private Integer nFoodObject = 0;
+    
+    private List<GameObject> superFoodObject = new ArrayList<GameObject>();
+    private List<Double> superFoodObjectDistance = new ArrayList<Double>();
+    private Integer nSuperFoodObject = 0;
 
     private Position Border;
 
@@ -77,13 +81,13 @@ public class Data {
     /* Setter */
     public void setThresholdAncaman(GameObject GreedyFox) {
         // masih coba-coba
-        this.thresholdAncaman = (Double) (GreedyFox.getSize() * 100.0);
+        this.thresholdAncaman = (Double) (GreedyFox.getSize() * 2.5);
     }
 
     public void isThreatObject(GameObject self, GameObject other) {
         /* F.S : object atau player yang masuk ke dalam threshold ancaman */
         double distance;
-        if (other.getGameObjectType() == ObjectTypes.FOOD || other.getGameObjectType() == ObjectTypes.SUPERFOOD) {
+        if (other.getGameObjectType() == ObjectTypes.FOOD) {
             distance = Statistic.getDistanceBetween(self, other);
             if (distance < thresholdAncaman) {
                 for (int i = 0; i < nFoodObject; i++) {
@@ -94,6 +98,18 @@ public class Data {
                     }
                 }
                 nFoodObject++;
+            }
+        }  else if (other.getGameObjectType() == ObjectTypes.SUPERFOOD) {
+            distance = Statistic.getDistanceBetween(self, other);
+            if (distance < thresholdAncaman) {
+                for (int i = 0; i < nFoodObject; i++) {
+                    if (distance < this.superFoodObjectDistance.get(i)) {
+                        superFoodObject.add(i, other);
+                        superFoodObjectDistance.add(i, distance);
+                        break;
+                    }
+                }
+                nSuperFoodObject++;
             }
         } else {
             if (other.getGameObjectType() == ObjectTypes.PLAYER) {
