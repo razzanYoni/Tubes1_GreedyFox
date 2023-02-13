@@ -79,7 +79,7 @@ public class Data {
 
     public void isThreatObject(GameObject self, GameObject other) {
         /* F.S : object atau player yang masuk ke dalam threshold ancaman */
-        float distance;
+        double distance;
         if (other.getGameObjectType() == ObjectTypes.FOOD || other.getGameObjectType() == ObjectTypes.SUPERFOOD) {
             distance = Statistic.getDistanceBetween(self, other);
             if (distance < thresholdAncaman) {
