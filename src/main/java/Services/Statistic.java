@@ -21,6 +21,25 @@ public class Statistic {
         return Math.sqrt(triangleX * triangleX + triangleY * triangleY);
     }
 
+    public static int countSudut(int absis, int ordinat){
+        Double radian;
+        if (absis == 0){
+            radian = Math.PI/2;
+        }  else {
+            radian = Math.atan2(ordinat, absis);
+        }
+        if (absis<0 && ordinat<0) {
+            radian = Math.PI + radian;
+        }
+        else if (absis>0 && ordinat<0) {
+            radian = Math.PI + radian;
+        }
+
+        var direction = toDegrees(radian);
+
+        return (direction + 360) % 360;
+    }
+
     public static int getHeadingBetween(GameObject GFox, GameObject otherObject) {
         var direction = toDegrees(Math.atan2(otherObject.getPosition().y - GFox.getPosition().y,
                 otherObject.getPosition().x - GFox.getPosition().x));

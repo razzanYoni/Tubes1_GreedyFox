@@ -5,6 +5,7 @@ Services\Data.class
 Models\GameObject.class
 Services\DefenseMode.class
 Main.class
+Services\FarmingMode.class
 Enums\PlayerActions.class
 Models\GameState.class
 Services\BotService.class
