@@ -37,20 +37,25 @@ public class BotService {
 
     public void computeNextPlayerAction(PlayerAction playerAction) {
         // collecting data for state
-        var dataState = new Data(bot, gameState);
+        if (!gameState.getGameObjects().isEmpty()) {
+            var dataState = new Data(bot, gameState);
 
-        // Determine the state
-        if (dataState.isNeedDefenseMode()) {
-            System.out.println("TERANCAMMM");
-            var defenseMode = new DefenseMode(dataState, bot, playerAction, dataState.getThreatObject(),
-                    dataState.getPlayerObject());
-            defenseMode.ressolvingTreat();
-            playerAction = defenseMode.getPlayerActionDefend();
+            // Determine the state
+            System.out.println(dataState.isNeedDefenseMode());
+            if (dataState.isNeedDefenseMode()) {
+                System.out.println("TERANCAMMM");
+                var defenseMode = new DefenseMode(dataState, bot, playerAction, dataState.getThreatObject(),
+                        dataState.getPlayerObject());
+                defenseMode.ressolvingTreat();
+                playerAction = defenseMode.getPlayerActionDefend();
+            } else {
+                playerAction.action = PlayerActions.STOP;
+                playerAction.heading = new Random().nextInt(360);
+            }
         } else {
-            playerAction.action = PlayerActions.STOP;
-            playerAction.heading = new Random().nextInt(360);
+            playerAction.action = PlayerActions.FORWARD;
+            playerAction.heading = 0;
         }
-
     }
 
     public GameState getGameState() {

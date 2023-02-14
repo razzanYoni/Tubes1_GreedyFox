@@ -15,16 +15,16 @@ public class Data {
 
     // List of Object
     // Threat Object Data
-    private List<GameObject> threatObject;
-    private List<Double> threatObjectDistance;
+    private List<GameObject> threatObject = new ArrayList<GameObject>();
+    private List<Double> threatObjectDistance = new ArrayList<Double>();
     private Integer nThreatObject;
     // Threat Player(Enemy) Data
-    private List<GameObject> threatPlayer;
-    private List<Double> threatPlayerDistance;
+    private List<GameObject> threatPlayer = new ArrayList<GameObject>();
+    private List<Double> threatPlayerDistance = new ArrayList<Double>();
     private Integer nThreatPlayer;
     // FoodObject Data
-    private List<GameObject> foodObject;
-    private List<Double> foodObjectDistance;
+    private List<GameObject> foodObject = new ArrayList<GameObject>();
+    private List<Double> foodObjectDistance = new ArrayList<Double>();
     private Integer nFoodObject;
     // Prey Data
     private List<GameObject> preyObject;
@@ -169,6 +169,10 @@ public class Data {
                         break;
                     }
                 }
+                if (nFoodObject == 0) {
+                    foodObject.add(other);
+                    foodObjectDistance.add(distance);
+                }
                 nFoodObject++;
             }
         } else {
@@ -183,14 +187,11 @@ public class Data {
                             break;
                         }
                     }
-                    // for (int i = 0; i < nThreatObject; i++) {
-                    // if (distance < this.threatPlayerDistance.get(i)) {
-                    // threatObject.add(i, other);
-                    // threatObjectDistance.add(i, distance);
-                    // break;
-                    // }
-                    // }
-                    // nThreatObject++;
+
+                    if (nThreatPlayer == 0) {
+                        threatPlayer.add(other);
+                        threatPlayerDistance.add(distance);
+                    }
                     nThreatPlayer++;
                 }
             } else if (other.getGameObjectType() == ObjectTypes.GASCLOUD
@@ -205,6 +206,11 @@ public class Data {
                             break;
                         }
                     }
+
+                    if (nThreatObject == 0) {
+                        threatObject.add(other);
+                        threatObjectDistance.add(distance);
+                    }
                     nThreatObject++;
                 }
             }
@@ -215,7 +221,8 @@ public class Data {
         this.ancamanBorder = false; // inisialisasi
         /* Menentukan Border sebagai ancaman atau tidak */
         Position selfPosition = this.gFox.getPosition();
-        int xSelf = selfPosition.getX(), ySelf = selfPosition.getY();
+        int xSelf = selfPosition.getX();
+        int ySelf = selfPosition.getY();
         Integer radius = this.gameState.getWorld().getRadius();
 
         Double distanceselfCenter = (Double) Math
