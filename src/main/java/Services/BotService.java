@@ -4,7 +4,6 @@ import Enums.*;
 import Models.*;
 import Services.Data;
 import Services.DefenseMode;
-import Services.Statistic;
 
 import java.util.*;
 import java.util.stream.*;
@@ -39,9 +38,9 @@ public class BotService {
         // collecting data for state
         if (!gameState.getGameObjects().isEmpty()) {
             var dataState = new Data(bot, gameState);
-
+            System.out.println(dataState.getnFoodObject());
             // Determine the state
-            System.out.println(dataState.isNeedDefenseMode());
+            // System.out.println(dataState.isNeedDefenseMode());
             if (dataState.isNeedDefenseMode()) {
                 System.out.println("TERANCAMMM");
                 var defenseMode = new DefenseMode(dataState, bot, playerAction, dataState.getThreatObject(),
