@@ -11,16 +11,43 @@ import java.util.stream.*;
 // Untuk memilih ajpakah memakan food biasa atau super food
 public class FarmingMode {
     // Atribut
-    private int food_afterburner = 3;
+    private Double afterburner_food_threshold;
     private Data gameDataFood;
-    private GameObject foodObj;
-    private PlayerAction gfAction;
     private GameObject gfbot;
+    // private GameObject foodObj;
+    // private PlayerAction gfAction;
     
     // Method
-    // True jika jarak player ke food < 3
+    // Contructor
+    public FarmingMode(Data gameDataFood, GameObject gfbot) {
+        this.gameDataFood = gameDataFood;
+        this.gfbot = gfbot;
+        // this.foodObj = foodObj;
+        // this.gfAction = gfAction;
+    }
+
+    // Copy Constructor
+    public FarmingMode(FarmingMode fm) {
+        this.afterburner_food_threshold = fm.afterburner_food_threshold;
+        this.gameDataFood = fm.gameDataFood;
+        this.gfbot = fm.gfbot;
+        // this.foodObj = fm.foodObj;
+        // this.gfAction = fm.gfAction;
+    }
+    
+
+    // Membandingkan SuperFood dengan regular food lalu 
+    public void setFoodThreshold(GameObject obj) {
+        afterburner_food_threshold = (Double) (obj.getSize() *0.5);
+    }
+
+
+
     public boolean isBurnerNeeded() {
-        return gameDataFood.getNearestFood().getGameObjectType() == ObjectTypes.SUPERFOOD && gameDataFood.getNearestFood() <= food_afterburner;
+        var rf = gameDataFood.getFoodObjectDistance().get(0);
+        var sf = gameDataFood.getSuperFoodObjectDistance().get(0);
+
+        return (rf < (sf + afterburner_food_threshold*0.1));
     }
 
     public void resolveFarmingFoodAction(PlayerAction playerAction) {
@@ -32,8 +59,6 @@ public class FarmingMode {
             playerAction.action = PlayerActions.STOPAFTERBURNER;
         }
 
-        playerAction.setHeading(Statistic.getDistanceBetween(gameDataFood.getNearestFood()));
-
-        this.gfAction = playerAction;
+        playerAction.setHeading(Statistic.getHeadingBetween(gfbot ,isBurnerNeeded() ? gameDataFood.getSuperFoodObject().get(0) : gameDataFood.getFoodObject().get(0)));
     }
 }
