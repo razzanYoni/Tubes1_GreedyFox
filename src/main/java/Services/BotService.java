@@ -4,7 +4,6 @@ import Enums.*;
 import Models.*;
 import Services.Data;
 import Services.DefenseMode;
-import Services.Statistic;
 
 import java.util.*;
 import java.util.stream.*;
@@ -37,20 +36,25 @@ public class BotService {
 
     public void computeNextPlayerAction(PlayerAction playerAction) {
         // collecting data for state
-        var dataState = new Data(bot, gameState);
-
-        // Determine the state
-        if (dataState.isNeedDefenseMode()) {
-            System.out.println("TERANCAMMM");
-            var defenseMode = new DefenseMode(dataState, bot, playerAction, dataState.getThreatObject(),
-                    dataState.getPlayerObject());
-            defenseMode.ressolvingTreat();
-            playerAction = defenseMode.getPlayerActionDefend();
+        if (!gameState.getGameObjects().isEmpty()) {
+            var dataState = new Data(bot, gameState);
+            System.out.println(dataState.getnFoodObject());
+            // Determine the state
+            // System.out.println(dataState.isNeedDefenseMode());
+            if (dataState.isNeedDefenseMode()) {
+                System.out.println("TERANCAMMM");
+                var defenseMode = new DefenseMode(dataState, bot, playerAction, dataState.getThreatObject(),
+                        dataState.getPlayerObject());
+                defenseMode.ressolvingTreat();
+                playerAction = defenseMode.getPlayerActionDefend();
+            } else {
+                playerAction.action = PlayerActions.STOP;
+                playerAction.heading = new Random().nextInt(360);
+            }
         } else {
-            playerAction.action = PlayerActions.STOP;
-            playerAction.heading = new Random().nextInt(360);
+            playerAction.action = PlayerActions.FORWARD;
+            playerAction.heading = 0;
         }
-
     }
 
     public GameState getGameState() {

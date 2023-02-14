@@ -18,17 +18,21 @@ public class Data {
     // List of Object
 
     // Threat Object Data
-    private List<GameObject> threatObject;
-    private List<Double> threatObjectDistance;
+    private List<GameObject> threatObject = new ArrayList<GameObject>();
+    private List<Double> threatObjectDistance = new ArrayList<Double>();
     private Integer nThreatObject;
     // Threat Player(Enemy) Data
-    private List<GameObject> threatPlayer;
-    private List<Double> threatPlayerDistance;
+    private List<GameObject> threatPlayer = new ArrayList<GameObject>();
+    private List<Double> threatPlayerDistance = new ArrayList<Double>();
     private Integer nThreatPlayer;
     // FoodObject Data
-    private List<GameObject> foodObject;
-    private List<Double> foodObjectDistance;
+    private List<GameObject> foodObject = new ArrayList<GameObject>();
+    private List<Double> foodObjectDistance = new ArrayList<Double>();
     private Integer nFoodObject;
+    // SuperfoodObject Data
+    private List<GameObject> superFoodObject = new ArrayList<GameObject>();
+    private List<Double> superFoodObjectDistance = new ArrayList<Double>();
+    private Integer nSuperFoodObject;
     // Prey Data
     private List<GameObject> preyObject;
     private List<Double> preyObjectDistance;
@@ -46,7 +50,6 @@ public class Data {
     private boolean needDefenseMode;
     private boolean feasibleAttackMode;
 
-
     /* Constructor */
     public Data(GameObject gFox, GameState gameState) {
         // Passing Data
@@ -56,6 +59,7 @@ public class Data {
         this.nThreatObject = 0;
         this.nThreatPlayer = 0;
         this.nFoodObject = 0;
+        this.nSuperFoodObject = 0;
         this.nPreyObject = 0;
         this.needDefenseMode = false;
         this.feasibleAttackMode = false;
@@ -64,7 +68,6 @@ public class Data {
         // Collect Data for other Attributes
         collectingData();
     }
-
 
     /* Method */
 
@@ -144,7 +147,7 @@ public class Data {
     /* Setter */
     public void setThresholdAncaman() {
         // masih coba-coba
-        this.thresholdAncaman = (Double) (this.gFox.getSize() * 3.0);
+        this.thresholdAncaman = (Double) (this.gFox.getSize() * 30.0);
     }
 
     /* Functional */
@@ -177,26 +180,43 @@ public class Data {
     private void checkThreatObject(GameObject other) {
         /* F.S : object atau player yang masuk ke dalam threshold ancaman */
         Double distance;
-        if (other.getGameObjectType() == ObjectTypes.FOOD) {
-            distance = Statistic.getDistanceBetween(this.gFox, other);
-            if (distance < thresholdAncaman) {
-                for (int i = 0; i < nFoodObject; i++) {
-                    if (distance < this.foodObjectDistance.get(i)) {
-                        foodObject.add(i, other);
-                        foodObjectDistance.add(i, distance);
-                        break;
+        distance = Statistic.getDistanceBetween(this.gFox, other);
+        if (distance < thresholdAncaman) {
+            if (other.getGameObjectType() == ObjectTypes.FOOD) {
+                if (nFoodObject == 0) {
+                    foodObject.add(other);
+                    foodObjectDistance.add(distance);
+                } else {
+                    if (this.foodObjectDistance.get(nFoodObject - 1) <= distance) {
+                        foodObject.add(other);
+                        foodObjectDistance.add(distance);
+                    } else {
+                        for (int i = 0; i < nFoodObject; i++) {
+                            if (distance < this.foodObjectDistance.get(i)) {
+                                foodObject.add(i, other);
+                                foodObjectDistance.add(i, distance);
+                                break;
+                            }
+                        }
                     }
                 }
                 nFoodObject++;
-            }
-        }  else if (other.getGameObjectType() == ObjectTypes.SUPERFOOD) {
-            distance = Statistic.getDistanceBetween(self, other);
-            if (distance < thresholdAncaman) {
-                for (int i = 0; i < nFoodObject; i++) {
-                    if (distance < this.superFoodObjectDistance.get(i)) {
-                        superFoodObject.add(i, other);
-                        superFoodObjectDistance.add(i, distance);
-                        break;
+            } else if (other.getGameObjectType() == ObjectTypes.SUPERFOOD) {
+                if (nSuperFoodObject == 0) {
+                    superFoodObject.add(other);
+                    superFoodObjectDistance.add(distance);
+                } else {
+                    if (this.superFoodObjectDistance.get(nSuperFoodObject - 1) <= distance) {
+                        superFoodObject.add(other);
+                        superFoodObjectDistance.add(distance);
+                    } else {
+                        for (int i = 0; i < nSuperFoodObject; i++) {
+                            if (distance < this.superFoodObjectDistance.get(i)) {
+                                superFoodObject.add(i, other);
+                                superFoodObjectDistance.add(i, distance);
+                                break;
+                            }
+                        }
                     }
                 }
                 nSuperFoodObject++;
@@ -204,39 +224,48 @@ public class Data {
         } else {
             if (other.getGameObjectType() == ObjectTypes.PLAYER) {
                 /* Player terurut berdasarkan distance */
-                distance = Statistic.getDistanceBetween(this.gFox, other);
-                if (distance < this.thresholdAncaman) {
-                    for (int i = 0; i < nThreatPlayer; i++) {
-                        if (distance < this.threatObjectDistance.get(i)) {
-                            threatPlayer.add(i, other);
-                            threatPlayerDistance.add(i, distance);
-                            break;
+                if (nThreatPlayer == 0) {
+                    threatPlayer.add(other);
+                    threatPlayerDistance.add(distance);
+                } else {
+                    if (this.threatPlayerDistance.get(nThreatPlayer - 1) <= distance) {
+                        threatPlayer.add(other);
+                        threatPlayerDistance.add(distance);
+                    } else {
+                        for (int i = 0; i < nThreatPlayer; i++) {
+                            if (distance < this.threatPlayerDistance.get(i)) {
+                                threatPlayer.add(i, other);
+                                threatPlayerDistance.add(i, distance);
+                                break;
+                            }
                         }
                     }
-                    // for (int i = 0; i < nThreatObject; i++) {
-                    // if (distance < this.threatPlayerDistance.get(i)) {
-                    // threatObject.add(i, other);
-                    // threatObjectDistance.add(i, distance);
-                    // break;
-                    // }
-                    // }
-                    // nThreatObject++;
-                    nThreatPlayer++;
                 }
+
+                nThreatPlayer++;
             } else if (other.getGameObjectType() == ObjectTypes.GASCLOUD
                     || other.getGameObjectType() == ObjectTypes.ASTEROIDFIELD) {
                 /* Object threat terurut berdasarkan distance */
-                distance = Statistic.getDistanceBetween(this.gFox, other);
-                if (distance < this.thresholdAncaman) {
-                    for (int i = 0; i < nThreatObject; i++) {
-                        if (distance < this.threatPlayerDistance.get(i)) {
-                            threatObject.add(i, other);
-                            threatObjectDistance.add(i, distance);
-                            break;
+                if (nThreatObject == 0) {
+                    threatObject.add(other);
+                    threatObjectDistance.add(distance);
+                } else {
+                    if (this.threatObjectDistance.get(nThreatObject - 1) <= distance) {
+                        threatObject.add(other);
+                        threatObjectDistance.add(distance);
+                    } else {
+                        for (int i = 0; i < nThreatObject; i++) {
+                            if (distance < this.threatObjectDistance.get(i)) {
+                                threatObject.add(i, other);
+                                threatObjectDistance.add(i, distance);
+                                break;
+                            }
                         }
                     }
-                    nThreatObject++;
                 }
+
+                nThreatObject++;
+
             }
         }
     }
@@ -245,7 +274,8 @@ public class Data {
         this.ancamanBorder = false; // inisialisasi
         /* Menentukan Border sebagai ancaman atau tidak */
         Position selfPosition = this.gFox.getPosition();
-        int xSelf = selfPosition.getX(), ySelf = selfPosition.getY();
+        int xSelf = selfPosition.getX();
+        int ySelf = selfPosition.getY();
         Integer radius = this.gameState.getWorld().getRadius();
 
         Double distanceselfCenter = (Double) Math
@@ -311,7 +341,7 @@ public class Data {
             }
             this.ancamanBorder = true;
         } else {
-            // this.border = 
+            // this.border =
             this.ancamanBorder = false;
         }
     }
