@@ -7,6 +7,8 @@ import java.util.*;
 import java.util.stream.*;
 import java.lang.Math;
 
+// TO DO benerin +- di fungsi isBorderAncaman
+
 public class Data {
     /* Atribute */
     // Game Data
@@ -14,6 +16,7 @@ public class Data {
     private GameObject gFox;
 
     // List of Object
+
     // Threat Object Data
     private List<GameObject> threatObject;
     private List<Double> threatObjectDistance;
@@ -43,6 +46,7 @@ public class Data {
     private boolean needDefenseMode;
     private boolean feasibleAttackMode;
 
+
     /* Constructor */
     public Data(GameObject gFox, GameState gameState) {
         // Passing Data
@@ -60,6 +64,7 @@ public class Data {
         // Collect Data for other Attributes
         collectingData();
     }
+
 
     /* Method */
 
@@ -98,6 +103,18 @@ public class Data {
 
     public Integer getnFoodObject() {
         return this.nFoodObject;
+    }
+
+    public List<GameObject> getSuperFoodObject() {
+        return superFoodObject;
+    }
+
+    public List<Double> getSuperFoodObjectDistance() {
+        return superFoodObjectDistance;
+    }
+
+    public Integer getnSuperFoodObject() {
+        return nSuperFoodObject;
     }
 
     public Position getBorderPosition() {
@@ -154,12 +171,13 @@ public class Data {
             // Lakukan Pengecekan apakah attack mode feasible, jika iya langsung collect
             // data Prey (Mangsa)
         }
+
     }
 
     private void checkThreatObject(GameObject other) {
         /* F.S : object atau player yang masuk ke dalam threshold ancaman */
         Double distance;
-        if (other.getGameObjectType() == ObjectTypes.FOOD || other.getGameObjectType() == ObjectTypes.SUPERFOOD) {
+        if (other.getGameObjectType() == ObjectTypes.FOOD) {
             distance = Statistic.getDistanceBetween(this.gFox, other);
             if (distance < thresholdAncaman) {
                 for (int i = 0; i < nFoodObject; i++) {
@@ -170,6 +188,18 @@ public class Data {
                     }
                 }
                 nFoodObject++;
+            }
+        }  else if (other.getGameObjectType() == ObjectTypes.SUPERFOOD) {
+            distance = Statistic.getDistanceBetween(self, other);
+            if (distance < thresholdAncaman) {
+                for (int i = 0; i < nFoodObject; i++) {
+                    if (distance < this.superFoodObjectDistance.get(i)) {
+                        superFoodObject.add(i, other);
+                        superFoodObjectDistance.add(i, distance);
+                        break;
+                    }
+                }
+                nSuperFoodObject++;
             }
         } else {
             if (other.getGameObjectType() == ObjectTypes.PLAYER) {
@@ -280,6 +310,9 @@ public class Data {
                 }
             }
             this.ancamanBorder = true;
+        } else {
+            // this.border = 
+            this.ancamanBorder = false;
         }
     }
 
