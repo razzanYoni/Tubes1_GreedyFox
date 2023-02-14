@@ -58,7 +58,7 @@ public class FarmingMode {
         else {
             playerAction.action = PlayerActions.STOPAFTERBURNER;
         }
-
+        System.out.println("FarmingMode : " + (isBurnerNeeded() ? "Slow" : "FULLGAS"));
         playerAction.setHeading(Statistic.getHeadingBetween(gfbot ,isBurnerNeeded() ? gameDataFood.getSuperFoodObject().get(0) : gameDataFood.getFoodObject().get(0)));
     }
 }
