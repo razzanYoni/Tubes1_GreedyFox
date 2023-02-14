@@ -36,14 +36,21 @@ public class BotService {
     }
 
     public void computeNextPlayerAction(PlayerAction playerAction) {
-        playerAction.action = PlayerActions.FORWARD;
-        playerAction.heading = new Random().nextInt(360);
+        // collecting data for state
+        var dataState = new Data(bot, gameState);
 
-        if (!gameState.getGameObjects().isEmpty()) {
-
+        // Determine the state
+        if (dataState.isNeedDefenseMode()) {
+            System.out.println("TERANCAMMM");
+            var defenseMode = new DefenseMode(dataState, bot, playerAction, dataState.getThreatObject(),
+                    dataState.getPlayerObject());
+            defenseMode.ressolvingTreat();
+            playerAction = defenseMode.getPlayerActionDefend();
+        } else {
+            playerAction.action = PlayerActions.STOP;
+            playerAction.heading = new Random().nextInt(360);
         }
 
-        this.playerAction = playerAction;
     }
 
     public GameState getGameState() {

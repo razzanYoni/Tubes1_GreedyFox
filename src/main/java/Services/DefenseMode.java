@@ -11,7 +11,7 @@ public class DefenseMode {
     private Data dataState;
     private GameObject gFox;
     private PlayerAction gFoxAction;
-    private List<GameObject> listAncaman, listEnemy; // listAncaman minimal berukuran 1, ListEnemy
+    private List<GameObject> listAncaman, listEnemy; // listAncaman minimal berukuran 1, ListEnemy bisa kosong
 
     // Constructor
     public DefenseMode(Data dataState, GameObject gFox, PlayerAction gFoxAction, List<GameObject> listAncaman,
@@ -24,14 +24,14 @@ public class DefenseMode {
     }
 
     // Method
-    public void ressolvingTreat() {
-
-        if (this.listEnemy.size() > 0) { // Ada Enemy sebagai ancaman
-
-        }
+    // Getter
+    public PlayerAction getPlayerActionDefend() {
+        return this.gFoxAction;
     }
 
-    public int getHeadingEscape() {
+    // Fungsi utama untuk menangani ancaman
+    public void ressolvingTreat() {
+
         // KAMUS LOKAL
         int escapeHeading, i;
         boolean isSandwich;
@@ -39,7 +39,7 @@ public class DefenseMode {
         escapeHeading = 0; // default
         isSandwich = false;
         if (this.listAncaman.size() > 1) { // Jika ancaman lebih dari 1
-            if (this.dataState.getNEnemy() == 1) { // Jika hanya ada 1 enemy tembak
+            if (this.dataState.getNEnemy() == 1) { // Jika hanya ada 1 enemy, tembak
                 if (gFox.TorpedoSalvoCount > 0) { // Jika ada salvo charge, tembakkan
                     gFoxAction.action = PlayerActions.FIRETORPEDOES;
                     gFoxAction.heading = Statistic.getHeadingBetween(gFox, listEnemy.get(0));
@@ -49,15 +49,12 @@ public class DefenseMode {
                                                                               // ThreatObject
                         escapeHeading += Statistic.getHeadingBetween(gFox, listAncaman.get(i));
                     }
-                    if (this.dataState.getBorderPosition() != null) {
+                    if (dataState.isBorderAncaman()) { // Jika Border Masuk ke dalam ancaman
                         escapeHeading += Statistic.getDistanceBetween(gFox.getPosition(),
                                 this.dataState.getBorderPosition());
                         escapeHeading /= (this.dataState.getNThreatObject() + this.dataState.getNEnemy() + 1);
                     }
-
-                    if (escapeHeading == 0) { // Pengecekan sandwich
-                        isSandwich = true;
-                    }
+                    isSandwich = (escapeHeading == 0); // Pengecekan Sandwich
                 }
             } else { // Jika terdapat lebih dari satu enemy, atau tak ada enemy
                 for (i = 0; i < this.dataState.getNThreatObject(); i++) { // Hitung heading untuk setiap ThreatObject
@@ -66,14 +63,12 @@ public class DefenseMode {
                 for (i = 0; i < this.dataState.getNEnemy(); i++) { // Hitung Heading untuk setiap Enemy
                     escapeHeading += Statistic.getHeadingBetween(gFox, listEnemy.get(i));
                 }
-                if (this.dataState.getBorderPosition() != null) {
+                if (dataState.isBorderAncaman()) { // Jika border masuk ke dalam ancaman
                     escapeHeading += Statistic.getDistanceBetween(gFox.getPosition(),
                             this.dataState.getBorderPosition());
                     escapeHeading /= (this.dataState.getNThreatObject() + this.dataState.getNEnemy() + 1);
                 }
-                if (escapeHeading == 0) { // Pengecekan Sandwich
-                    isSandwich = true;
-                }
+                isSandwich = (escapeHeading == 0); // Pengecekan Sandwich
             }
         } else {
             if (this.dataState.getNEnemy() == 1) { // Ada satu ancaman yaitu enemy
@@ -82,33 +77,39 @@ public class DefenseMode {
                     gFoxAction.heading = Statistic.getHeadingBetween(gFox, listEnemy.get(0));
                 } else { // Jika hanya bisa kabur dari enemy
                     escapeHeading += Statistic.getHeadingBetween(gFox, listEnemy.get(0));
-                    if (this.dataState.getBorderPosition() != null) {
-                        escapeHeading += Statistic.getDistanceBetween(gFox.getPosition(),
+                    if (dataState.isBorderAncaman()) { // Jika border masuk ke dalam ancaman
+                        escapeHeading += Statistic.getHeadingBetween(gFox,
                                 this.dataState.getBorderPosition());
                         escapeHeading /= 2;
                     }
-                    if (escapeHeading == 0) { // Pengecekan Sandwich
-                        isSandwich = true;
-                    }
+                    isSandwich = (escapeHeading == 0); // Pengecekan Sandwich
                 }
             } else { // Ancaman satu, tetapi bukan enemy, lari belum dibuat opposite
                 escapeHeading += Statistic.getHeadingBetween(this.gFox, this.listAncaman.get(0));
-                if (this.dataState.getBorderPosition() != null) {
+                if (dataState.isBorderAncaman()) { // Jika border masuk ke dalam ancaman
                     escapeHeading += Statistic.getDistanceBetween(gFox.getPosition(),
                             this.dataState.getBorderPosition());
                     escapeHeading /= 2;
                 }
-
-                if (escapeHeading == 0) { // Pengecekan Sandwich
-                    isSandwich = true;
-                }
+                isSandwich = (escapeHeading == 0); // Pengecekan Sandwich
             }
         }
 
-        if (isSandwich) { // Penanganan Kasus Sandwich
+        if (isSandwich || escapeHeading == 0) { // Penanganan Kasus Sandwich
+            // Belum dihandle
+            /*
+             * Strategi
+             * Cari celah jika sandwich hanya dua ancaman
+             * Jika lebih dari dua, go to asteroid fields jika ada
+             * Jika asteroid fields tak ada pertimbangkan penggunaan teleporter
+             * Jika pilihan antara trobos gas cloud atau enemy, trobos gas cloud
+             * Jika hanya ada enemy, bergerak menuju enemy terkecil
+             */
 
+        } else {
+            System.out.println("Mencoba Bertahan Nih");
+            gFoxAction.action = PlayerActions.FORWARD;
+            gFoxAction.heading = (escapeHeading + 180) % 360; // Opposite Direction dari resultan escape
         }
-
-        return escapeHeading;
     }
 }
