@@ -52,6 +52,7 @@ public class AttackMode {
     public void resolveAttackMode() {
         if (dataAttack.getnPreyObject() > 0) { // harus ada mangsa escape null
             choosePrey();
+            gAction.setHeading(Statistic.getHeadingBetween(gFox, prey);
             if (Statistic.getDistanceBetween(gFox, prey) < closePrey) 
             {
                 // jika jarak ke mangsa dekat
@@ -68,22 +69,21 @@ public class AttackMode {
                 if (!dataAttack.isBorderAncaman()) 
                 {
                     // cek apakah teleport aman
-                    System.out.println("Fire Teleport");
+                    System.out.println("Fire Teleport -> \b ");
                     FireTeleport();
                     System.out.println("Zuoppp Tp");
                     Teleport();
                 }
             }
-            
             go();
-            gAction.setHeading(Statistic.getHeadingBetween(gFox, dataAttack.getPreyObject().get(0)));
         }
     }
 
 
     // membandingkan ukuran bot Gf dengan musuh saat perkiraan sampai
     public boolean iscloseTraseholdsize() {
-        return (gFox.getSize() - dataAttack.getPreyObject().get(0).getSize() > dataAttack.getPreyObjectDistance().get(0)*3 + 5);
+        return (gFox.getSize() < prey.getSize());
+        // return (gFox.getSize() - prey.getSize() > dataAttack.getPreyObjectDistance().get(0)*3 + 5);
     }
 
     // method memilih mangsa, apakah pilih yang terdekat dengan player atau terdekat dengan teleporter
