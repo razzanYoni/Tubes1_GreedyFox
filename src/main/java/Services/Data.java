@@ -193,8 +193,7 @@ public class Data {
 
         for (i = 0; i < listPlayer.size(); i++) {
             if (listPlayer.get(i).id != this.gFox.id) { // Jika bukan diri sendiri, lakukan pengecekan
-                System.out.println(listGameObjects.get(i).getGameObjectType());
-                checkThreatPlayer(listPlayer.get(i));
+                checkThreatObject(listPlayer.get(i));
             }
         }
 
@@ -209,7 +208,7 @@ public class Data {
             // data Prey (Mangsa)
             if (this.nPreyObject > 0) {
                 this.feasibleAttackMode = true;
-            } 
+            }
         }
 
     }
@@ -342,8 +341,9 @@ public class Data {
         int ySelf = selfPosition.getY();
         Integer radius = this.gameState.getWorld().getRadius();
 
-        Double distanceselfCenter = Statistic.getDistanceBetween(selfPosition, this.gameState.getWorld().getCenterPoint()); 
-        
+        Double distanceselfCenter = Statistic.getDistanceBetween(selfPosition,
+                this.gameState.getWorld().getCenterPoint());
+
         Double distance = radius - distanceselfCenter;
 
         /* Menentukan Kuadran */
@@ -361,20 +361,24 @@ public class Data {
                     this.border = new Position(radius, 0);
                 } else if (ySelf > 0) {
                     Double theta = (Double) Math.atan2(ySelf, xSelf);
-                    this.border = new Position((int) Math.round(radius * Math.cos(theta)), (int) Math.round(radius * Math.sin(theta)));
+                    this.border = new Position((int) Math.round(radius * Math.cos(theta)),
+                            (int) Math.round(radius * Math.sin(theta)));
                 } else if (ySelf < 0) {
                     Double theta = (Double) Math.atan2(ySelf, xSelf);
-                    this.border = new Position((int) Math.round(radius * Math.cos(theta)), (int) Math.round(radius * Math.sin(theta)));
+                    this.border = new Position((int) Math.round(radius * Math.cos(theta)),
+                            (int) Math.round(radius * Math.sin(theta)));
                 }
             } else if (xSelf < 0) {
                 if (ySelf == 0) {
                     this.border = new Position(-radius, 0);
                 } else if (ySelf > 0) {
                     Double theta = (Double) Math.atan2(ySelf, xSelf);
-                    this.border = new Position((int) Math.round(radius * Math.cos(theta)), (int) Math.round(radius * Math.sin(theta)));
+                    this.border = new Position((int) Math.round(radius * Math.cos(theta)),
+                            (int) Math.round(radius * Math.sin(theta)));
                 } else if (ySelf < 0) {
                     Double theta = (Double) Math.atan2(ySelf, xSelf);
-                    this.border = new Position((int) Math.round(radius * Math.cos(theta)), (int) Math.round(radius * Math.sin(theta)));
+                    this.border = new Position((int) Math.round(radius * Math.cos(theta)),
+                            (int) Math.round(radius * Math.sin(theta)));
                 }
             }
             this.ancamanBorder = true;

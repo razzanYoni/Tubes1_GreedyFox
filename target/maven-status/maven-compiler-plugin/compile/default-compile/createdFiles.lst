@@ -1,4 +1,5 @@
 Enums\Effects.class
+Services\AttackMode.class
 Enums\ObjectTypes.class
 Models\PlayerAction.class
 Services\Data.class
