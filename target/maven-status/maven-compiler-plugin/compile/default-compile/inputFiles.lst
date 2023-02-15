@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 D:\Informatika\Kuliah\IF\SMT 4\Stima\Tubes\Tubes 1\6\Tubes1_GreedyFox\src\main\java\Enums\ObjectTypes.java
 D:\Informatika\Kuliah\IF\SMT 4\Stima\Tubes\Tubes 1\6\Tubes1_GreedyFox\src\main\java\Enums\Effects.java
 D:\Informatika\Kuliah\IF\SMT 4\Stima\Tubes\Tubes 1\6\Tubes1_GreedyFox\src\main\java\Services\Data.java
@@ -13,3 +14,21 @@ D:\Informatika\Kuliah\IF\SMT 4\Stima\Tubes\Tubes 1\6\Tubes1_GreedyFox\src\main\j
 D:\Informatika\Kuliah\IF\SMT 4\Stima\Tubes\Tubes 1\6\Tubes1_GreedyFox\src\main\java\Models\GameObject.java
 D:\Informatika\Kuliah\IF\SMT 4\Stima\Tubes\Tubes 1\6\Tubes1_GreedyFox\src\main\java\Models\World.java
 D:\Informatika\Kuliah\IF\SMT 4\Stima\Tubes\Tubes 1\6\Tubes1_GreedyFox\src\main\java\Models\GameStateDto.java
+=======
+D:\AKMAL M\Institut Teknologi Bandung\Semester 3\Strategi Algoritme\Tubes1\Tubes1_GreedyFox\src\main\java\Enums\PlayerActions.java
+D:\AKMAL M\Institut Teknologi Bandung\Semester 3\Strategi Algoritme\Tubes1\Tubes1_GreedyFox\src\main\java\Main.java
+D:\AKMAL M\Institut Teknologi Bandung\Semester 3\Strategi Algoritme\Tubes1\Tubes1_GreedyFox\src\main\java\Services\AttackMode.java
+D:\AKMAL M\Institut Teknologi Bandung\Semester 3\Strategi Algoritme\Tubes1\Tubes1_GreedyFox\src\main\java\Models\GameState.java
+D:\AKMAL M\Institut Teknologi Bandung\Semester 3\Strategi Algoritme\Tubes1\Tubes1_GreedyFox\src\main\java\Models\GameStateDto.java
+D:\AKMAL M\Institut Teknologi Bandung\Semester 3\Strategi Algoritme\Tubes1\Tubes1_GreedyFox\src\main\java\Services\FarmingMode.java
+D:\AKMAL M\Institut Teknologi Bandung\Semester 3\Strategi Algoritme\Tubes1\Tubes1_GreedyFox\src\main\java\Models\PlayerAction.java
+D:\AKMAL M\Institut Teknologi Bandung\Semester 3\Strategi Algoritme\Tubes1\Tubes1_GreedyFox\src\main\java\Enums\Effects.java
+D:\AKMAL M\Institut Teknologi Bandung\Semester 3\Strategi Algoritme\Tubes1\Tubes1_GreedyFox\src\main\java\Enums\ObjectTypes.java
+D:\AKMAL M\Institut Teknologi Bandung\Semester 3\Strategi Algoritme\Tubes1\Tubes1_GreedyFox\src\main\java\Services\Statistic.java
+D:\AKMAL M\Institut Teknologi Bandung\Semester 3\Strategi Algoritme\Tubes1\Tubes1_GreedyFox\src\main\java\Models\World.java
+D:\AKMAL M\Institut Teknologi Bandung\Semester 3\Strategi Algoritme\Tubes1\Tubes1_GreedyFox\src\main\java\Services\Data.java
+D:\AKMAL M\Institut Teknologi Bandung\Semester 3\Strategi Algoritme\Tubes1\Tubes1_GreedyFox\src\main\java\Services\DefenseMode.java
+D:\AKMAL M\Institut Teknologi Bandung\Semester 3\Strategi Algoritme\Tubes1\Tubes1_GreedyFox\src\main\java\Models\GameObject.java
+D:\AKMAL M\Institut Teknologi Bandung\Semester 3\Strategi Algoritme\Tubes1\Tubes1_GreedyFox\src\main\java\Models\Position.java
+D:\AKMAL M\Institut Teknologi Bandung\Semester 3\Strategi Algoritme\Tubes1\Tubes1_GreedyFox\src\main\java\Services\BotService.java
+>>>>>>> Stashed changes
