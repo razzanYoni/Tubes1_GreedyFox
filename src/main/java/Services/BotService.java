@@ -53,16 +53,9 @@ public class BotService {
                 playerAction = defenseMode.getPlayerActionDefend();
             } else {
                 /* Attack */
-                if (dataState.isFeasibleAttackMode() && (bot.TorpedoSalvoCount > 0)) {
-                    // System.out.println("MENYERANGGG");
-
-                    /* DUMMY */
-                    playerAction.action = PlayerActions.FIRETORPEDOES;
-                    playerAction.heading = Statistic.getHeadingBetween(bot, dataState.getPreyObject().get(0));
-
-                    // playerAction.action = PlayerActions.FORWARD;
-                    // playerAction.heading = new Random().nextInt(360);
-
+                if (dataState.isFeasibleAttackMode()) {
+                    AttackMode attackMode = new AttackMode(dataState, bot, playerAction);
+                    attackMode.resolveAttackMode();
                 } else {
                     /* Farming */
                     // System.out.println("FARMINGGG");
