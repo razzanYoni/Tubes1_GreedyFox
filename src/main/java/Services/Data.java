@@ -6,13 +6,14 @@ import Models.*;
 import java.util.*;
 import java.util.stream.*;
 
-import javax.sound.midi.Soundbank;
-
 import java.lang.Math;
 
 // TODO : THRESHOLD ATTACK
 // TODO : THRESHOLD FARMING
 // TODO : THRESHOLD TORPEDO OPTIMAL (SIZE DAN DISTANCE)
+
+// TODO : arah, jarak, size gfbot
+// TODO : KUADRAN 1 2 TURUN, KUADRAN 3 4 NAEK
 
 public class Data {
     /* Atribute */
@@ -42,6 +43,9 @@ public class Data {
     private List<GameObject> preyObject = new ArrayList<GameObject>();
     private List<Double> preyObjectDistance = new ArrayList<Double>();
     private Integer nPreyObject;
+    // TorpedoSalvo Enemy Data
+    private List<GameObject> torpedoObject = new ArrayList<GameObject>();
+    private Integer nEnemysTorpedo;
 
     // border Data
     private Position border;
@@ -56,6 +60,7 @@ public class Data {
     private boolean needDefenseMode;
     private boolean feasibleAttackMode;
     private boolean isTorpedoOptimal;
+    private boolean torpedoEscapeMode;
 
     /* Constructor */
     public Data(GameObject gFox, GameState gameState) {
@@ -71,6 +76,7 @@ public class Data {
         this.needDefenseMode = false;
         this.feasibleAttackMode = false;
         this.resultanDistanceNonTeleport = 2;
+        this.nEnemysTorpedo = 0;
         setThresholdDistanceAncaman();
         setThresholdDistanceEnemy();
         // Collect Data for other Attributes
@@ -141,6 +147,10 @@ public class Data {
         return nSuperFoodObject;
     }
 
+    public List<GameObject> getNTorpedoesObject(){
+        return this.torpedoObject;
+    }
+
     public Position getBorderPosition() {
         return this.border;
     }
@@ -169,49 +179,52 @@ public class Data {
         return this.isTorpedoOptimal;
     }
 
+    public boolean isTorpedoEscape(){
+        return this.torpedoEscapeMode;
+    }
+
     /* Setter */
+    public void setTorpedoEscape() {
+        if (this.nEnemysTorpedo >= 2) {
+            /* SHIELD */
+            torpedoEscapeMode = false;
+        } else {
+            torpedoEscapeMode = true;
+        }
+    }
     public void setThresholdDistanceAncaman() {
         Double tempThreshold;
         if (gameState.getWorld().getRadius() >= 1500) {
-            tempThreshold = (Double) (gameState.getWorld().getRadius() / 5.5);
-        } else if (gameState.getWorld().getRadius() >= 600) {
             tempThreshold = (Double) (gameState.getWorld().getRadius() / 4.5);
+        } else if (gameState.getWorld().getRadius() >= 600) {
+            tempThreshold = (Double) (gameState.getWorld().getRadius() / 4.25);
         } else {
             tempThreshold = (Double) (gameState.getWorld().getRadius() / 3.5);
         }
         this.thresholdDistanceAncaman = (Double) (this.gFox.getSize() * Math.sqrt(2) + tempThreshold);
-
-//        if (this.gFox.getSize() < 25){
-//            this.thresholdDistanceAncaman = (Double) (this.gFox.getSize() * 10.0);
-//        } else {
-//            this.thresholdDistanceAncaman = (Double) (this.gFox.getSize() * 8.0);
-//        }
     }
 
     public void setThresholdDistanceEnemy() {
         Double tempThreshold;
         if (gameState.getWorld().getRadius() >= 1500) {
-            tempThreshold = (Double) (gameState.getWorld().getRadius() / 6.5);
+            tempThreshold = (Double) (gameState.getWorld().getRadius() / 6.25);
         } else if (gameState.getWorld().getRadius() >= 600) {
             tempThreshold = (Double) (gameState.getWorld().getRadius() / 5.5);
         } else {
             tempThreshold = (Double) (gameState.getWorld().getRadius() / 4.5);
         }
         this.thresholdThreatPlayer = (Double) (this.gFox.getSize() * Math.sqrt(2) + tempThreshold);
-
-//        this.thresholdThreatPlayer = (Double) (this.gFox.getSize() * 8.0);
     }
 
-    // INI JANGAN CONSTANT
     public void setIsTorpedoOptimal() {
         if (this.nThreatPlayer > 0) {
             if (((this.threatPlayerDistance.get(0) - (this.threatPlayer.get(0).getSize() * Math.sqrt(2)) - (this.gFox.getSize() * Math.sqrt(2))) <= 225.0)
-                    && (this.gFox.TorpedoSalvoCount > 0) && (this.gFox.getSize() > 15)) {
+                    && (this.gFox.TorpedoSalvoCount > 0) && (this.gFox.getSize() > 20)) {
                 isTorpedoOptimal = true;
             }
         } else if (this.nPreyObject > 0) {
             if (((this.preyObjectDistance.get(0) - (this.preyObject.get(0).getSize() * Math.sqrt(2)) - (this.gFox.getSize() * Math.sqrt(2))) <= 225.0)
-                && (this.gFox.TorpedoSalvoCount > 0) && (this.gFox.getSize() > 15)) {
+                && (this.gFox.TorpedoSalvoCount > 0) && (this.gFox.getSize() > 20)) {
                 isTorpedoOptimal = true;
             }
         } else {
@@ -363,6 +376,19 @@ public class Data {
         }
     }
 
+    private void checkEnemysTorpedo(GameObject other) {
+        /* F.S : List Of Enemy's Torpedoes */
+        Double distance;
+        distance = Statistic.getDistanceBetween(this.gFox, other);
+
+        if (distance < (300 + gFox.getSize() * Math.sqrt(2))) {
+            if (other.getGameObjectType() == ObjectTypes.TORPEDOSALVOCOUNT) {
+                torpedoObject.add(0,other);
+                nEnemysTorpedo++;
+            }
+        }
+    }
+
     private void checkBorderAncaman() {
         this.ancamanBorder = false; // inisialisasi
         /* Menentukan Border sebagai ancaman atau tidak */
@@ -432,7 +458,11 @@ public class Data {
                 {
                     checkFoodObject(currentObject);
                 } else {
-                    checkThreatObject(currentObject);
+                    if (currentObject.getGameObjectType() == ObjectTypes.GASCLOUD || currentObject.getGameObjectType() == ObjectTypes.ASTEROIDFIELD){
+                        checkThreatObject(currentObject);
+                    } else {
+                        checkEnemysTorpedo(currentObject);
+                    }
                 }
             }
         }

@@ -55,4 +55,17 @@ public class Statistic {
     public static int toDegrees(double v) {
         return (int) (v * (180 / Math.PI));
     }
+
+    public static int headingAvoidTorpedo(Position object) {
+        /* F.S : Mengembalikan degree yang cocok untuk menghindar dari Torpedo Salvo */
+
+        int x = object.getX();
+        int y = object.getY();
+
+        if (((x >= 0) && (y >= 0)) || ((x < 0) && (y >= 0))) {
+            return 90;
+        } else {
+            return 270;
+        }
+    }
 }

@@ -66,13 +66,13 @@ public class BotService {
 
 
                         // DUMMY
-                        playerAction.action = PlayerActions.FORWARD;
-                        var foodList = gameState.getGameObjects()
-                                .stream().filter(item -> item.getGameObjectType() == ObjectTypes.FOOD)
-                                .sorted(Comparator
-                                        .comparing(item -> Statistic.getDistanceBetween(bot, item)))
-                                .collect(Collectors.toList());
-                        playerAction.heading = Statistic.getHeadingBetween(bot, foodList.get(0));
+//                        playerAction.action = PlayerActions.FORWARD;
+//                        var foodList = gameState.getGameObjects()
+//                                .stream().filter(item -> item.getGameObjectType() == ObjectTypes.FOOD)
+//                                .sorted(Comparator
+//                                        .comparing(item -> Statistic.getDistanceBetween(bot, item)))
+//                                .collect(Collectors.toList());
+//                        playerAction.heading = Statistic.getHeadingBetween(bot, foodList.get(0));
 
 
 
@@ -81,8 +81,8 @@ public class BotService {
 
 
 
-//                        FarmingMode foodList = new FarmingMode(dataState, bot, playerAction);
-//                        foodList.resolveFarmingFoodAction();
+                        FarmingMode foodList = new FarmingMode(dataState, bot, playerAction);
+                        foodList.resolveFarmingFoodAction();
                     } else {
                         playerAction.action = PlayerActions.FORWARD;
                         playerAction.heading = new Random().nextInt(360);
