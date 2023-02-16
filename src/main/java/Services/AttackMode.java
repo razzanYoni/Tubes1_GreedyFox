@@ -3,6 +3,7 @@ package Services;
 import Enums.*;
 import Models.*;
 
+import java.sql.SQLOutput;
 import java.util.*;
 import java.util.stream.*;
 
@@ -21,21 +22,29 @@ public class AttackMode {
     private PlayerAction gAction;
     private GameObject prey;
     private GameObject other;
-    private final int closePrey = 10;
-    private final int closeTele = 20;
+    private GameState gameState;
+    private Double closePrey;
+    private final int closeTele = 20; // Jangan constant
 
     // Method
     // Constructor
-    public AttackMode(Data dataAttack, GameObject gFox, PlayerAction gAction) {
+    public AttackMode(Data dataAttack, GameObject gFox, PlayerAction gAction, GameState gameState) {
         this.dataAttack = dataAttack;
         this.gFox = gFox;
         this.gAction = gAction;
+        this.gameState = gameState;
+        setClosePrey();
     }
     // Copy Constructor
     public AttackMode(AttackMode am) {
         this.dataAttack = am.dataAttack;
         this.gFox = am.gFox;
         this.gAction = am.gAction;
+    }
+
+    // Setter
+    public void setClosePrey(){
+        this.closePrey = gFox.getSize() * Math.sqrt(2) + 15;
     }
 
     // Attack Type
@@ -46,44 +55,44 @@ public class AttackMode {
     private void FireTorpedo() { gAction.action = PlayerActions.FIRETORPEDOES;}
     private void FireSuperNova() { gAction.action = PlayerActions.FIRESUPERNOVA;}
     private void DetonateSuperNova() { gAction.action = PlayerActions.DETONATESUPERNOVA;}
-    private void FireTeleport() { gAction.action = PlayerActions.FIRETELEPORT;}
-    private void Teleport() { gAction.action = PlayerActions.TELEPORT;}
-
-    public void resolveAttackMode() {
-        if (dataAttack.getNPreyObject() > 0) { // harus ada mangsa escape null
-            choosePrey();
-            gAction.setHeading(Statistic.getHeadingBetween(gFox, prey));
-            if (Statistic.getDistanceBetween(gFox, prey) < closePrey) 
-            {
-                // jika jarak ke mangsa dekat
-                UseAfterburner();
-                if (!iscloseTraseholdsize() && gFox.TorpedoSalvoCount > 0)
-                {
-                    System.out.println("SIUU Torpedo!");
-                    FireTorpedo();
-                }
-            }
-            else 
-            {
-                StopAfterburner();
-                if (!dataAttack.isBorderAncaman()) 
-                {
-                    // cek apakah teleport aman
-                    System.out.println("Fire Teleport -> \b ");
-                    FireTeleport();
-                    System.out.println("Zuoppp Tp");
-                    Teleport();
-                }
-            }
-            go();
-        }
+    private void FireTeleport() {
+        gAction.action = PlayerActions.FIRETELEPORT;
+        System.out.println("MASUKKKKKKKKKKKKKKKKKKK");
+    }
+    private void Teleport() {
+        gAction.action = PlayerActions.TELEPORT;
+        System.out.printf("KELUARRRRRRRRRRRRRRRRRRRRR");
     }
 
-
-    // membandingkan ukuran bot Gf dengan musuh saat perkiraan sampai
-    public boolean iscloseTraseholdsize() {
-        return (gFox.getSize() < prey.getSize());
-        // return (gFox.getSize() - prey.getSize() > dataAttack.getPreyObjectDistance().get(0)*3 + 5);
+    public void resolveAttackMode() {
+        choosePrey();
+        go();
+        gAction.setHeading(Statistic.getHeadingBetween(gFox, prey));
+        if (Statistic.getDistanceBetween(gFox, prey) < closePrey)
+        {
+            // jika jarak ke mangsa dekat
+            UseAfterburner();
+        }
+        else
+        {
+            StopAfterburner();
+            if (dataAttack.isTorpedoOptimal())
+            {
+                System.out.println("SIUU Torpedo!");
+                FireTorpedo();
+            } else if ((gFox.getSize() - 20) > (prey.getSize() + 10)) {
+                gAction.setHeading(Statistic.getHeadingBetween(gFox, gameState.getWorld().getCenterPoint()));
+                // cek apakah teleport aman
+                System.out.println("Fire Teleport -> \b ");
+                if (gFox.TeleporterCount > 0)  {
+                    Teleport();
+                    System.out.println("Zuoppp Tp");
+                } else {
+                    FireTeleport();
+                    System.out.println("TP PENDAHULUAN");
+                }
+            }
+        }
     }
 
     // method memilih mangsa, apakah pilih yang terdekat dengan player atau terdekat dengan teleporter
@@ -94,9 +103,12 @@ public class AttackMode {
         Double closeTeleport = dataAttack.getPreyObjectDistance().get(0);
 
         // Mencari yang paling dekat dari tele
+
+
+        // ?????????
         i = 1; found = false;
         while (i < dataAttack.getNPreyObject() && !found) {
-            if (dataAttack.getPlayerDistance().get(i) > closeTele - 3 && dataAttack.getPreyObjectDistance().get(i) < closeTele + 3) {
+            if (dataAttack.getPreyObjectDistance().get(i) > closeTele - 3 && dataAttack.getPreyObjectDistance().get(i) < closeTele + 3) {
                 // choose terdekat dari tele, galat 3, pilih i jika objek ke i lebih dekat dari pada objek ke i-1
                 if (Math.abs(closeTele - dataAttack.getPreyObjectDistance().get(i)) < Math.abs(closeTele - closeTeleport)) {
                     closeTeleport = dataAttack.getPreyObjectDistance().get(i);
@@ -118,20 +130,10 @@ public class AttackMode {
                 this.prey = dataAttack.getPreyObject().get(0);
             }
             else {
-                this.prey = dataAttack.getPlayerObject().get(i-1);
+                    this.prey = dataAttack.getPreyObject().get(i - 1);
             }
         }
         
     }
 
 }
-// FORWARD(1),
-// STOP(2),
-// STARTAFTERBURNER(3),
-// STOPAFTERBURNER(4),
-// FIRETORPEDOES(5),
-// FIRESUPERNOVA(6),
-// DETONATESUPERNOVA(7),
-// FIRETELEPORT(8),
-// TELEPORT(9),
-// ACTIVATESHIELD(10);

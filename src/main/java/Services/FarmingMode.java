@@ -7,7 +7,11 @@ import java.util.*;
 import java.util.stream.*;
 
 // File : FarmingMode.java
-// Untuk memilih ajpakah memakan food biasa atau super food
+// Untuk memilih apakah memakan food biasa atau super food
+
+// ??? : STOP AFTER BURNER EDGE CASE BELUM TER-HANDLE
+// TODO : KASUS GALAU
+
 public class FarmingMode {
     // Atribut
     private Double afterburner_food_threshold;
@@ -21,9 +25,8 @@ public class FarmingMode {
     public FarmingMode(Data gameDataFood, GameObject gfbot, PlayerAction gfAction) {
         this.gameDataFood = gameDataFood;
         this.gfbot = gfbot;
-        // this.foodObj = foodObj;
         this.gfAction = gfAction;
-        setFoodThreshold(gfbot);
+        setSuperFoodThreshold(gfbot);
     }
 
     // Copy Constructor
@@ -34,11 +37,10 @@ public class FarmingMode {
         // this.foodObj = fm.foodObj;
         // this.gfAction = fm.gfAction;
     }
-    
 
     // Membandingkan SuperFood dengan regular food lalu 
-    public void setFoodThreshold(GameObject obj) {
-        afterburner_food_threshold = (Double) (obj.getSize() *0.2);
+    public void setSuperFoodThreshold(GameObject obj) {
+        afterburner_food_threshold = (Double) (obj.getSize() * 0.02);  // Pake Radius Kah??
     }
 
     public boolean isBurnerNeeded() {
@@ -47,21 +49,22 @@ public class FarmingMode {
         } else {
             var rf = gameDataFood.getFoodObjectDistance().get(0);
             var sf = gameDataFood.getSuperFoodObjectDistance().get(0);
-    
+            /* superfood sama isburnerneeded*/
             return (rf < (sf + afterburner_food_threshold*0.1));
         }
-        
     }
 
     public void resolveFarmingFoodAction() {
         gfAction.action = PlayerActions.FORWARD;
-        if (isBurnerNeeded()) {
-            gfAction.action = PlayerActions.STARTAFTERBURNER;
-        }
-        else {
-            gfAction.action = PlayerActions.STOPAFTERBURNER;
-        }
-        System.out.println("FarmingMode : " + (isBurnerNeeded() ? "Slow" : "FULLGAS"));
+
+        // KALO MAU PAKE HANDLE LAGI KASUS GERAK AFTERBURNER SAMA STOPAFTERBURNER
+//        if (isBurnerNeeded()) {
+//            gfAction.action = PlayerActions.STARTAFTERBURNER;
+//        }
+//        else {
+//            gfAction.action = PlayerActions.STOPAFTERBURNER;
+//        }
+
         gfAction.setHeading(Statistic.getHeadingBetween(gfbot ,isBurnerNeeded() ? gameDataFood.getSuperFoodObject().get(0) : gameDataFood.getFoodObject().get(0)));
     }
 }

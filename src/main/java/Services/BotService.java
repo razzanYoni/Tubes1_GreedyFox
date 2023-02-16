@@ -2,13 +2,9 @@ package Services;
 
 import Enums.*;
 import Models.*;
-import Services.Data;
-import Services.DefenseMode;
 
 import java.util.*;
 import java.util.stream.*;
-
-import javax.sound.midi.Soundbank;
 
 public class BotService {
     private GameObject bot;
@@ -43,6 +39,8 @@ public class BotService {
             // System.out.println(dataState.getnFoodObject());
             // Determine the state
 
+
+
             /* Defense */
             if (dataState.isNeedDefenseMode()) {
                 // System.out.println("TERANCAMMM");
@@ -54,51 +52,48 @@ public class BotService {
             } else {
                 /* Attack */
                 if (dataState.isFeasibleAttackMode()) {
-                    AttackMode attackMode = new AttackMode(dataState, bot, playerAction);
+                    AttackMode attackMode = new AttackMode(dataState, bot, playerAction, gameState);
                     attackMode.resolveAttackMode();
                 } else {
                     /* Farming */
                     // System.out.println("FARMINGGG");
 
-                    // DUMMY
+
                     if ((dataState.getnFoodObject() > 0)) {
-                        FarmingMode foodList = new FarmingMode(dataState, bot, playerAction);
-                        foodList.resolveFarmingFoodAction();
+
+
+
+
+
+                        // DUMMY
+                        playerAction.action = PlayerActions.FORWARD;
+                        var foodList = gameState.getGameObjects()
+                                .stream().filter(item -> item.getGameObjectType() == ObjectTypes.FOOD)
+                                .sorted(Comparator
+                                        .comparing(item -> Statistic.getDistanceBetween(bot, item)))
+                                .collect(Collectors.toList());
+                        playerAction.heading = Statistic.getHeadingBetween(bot, foodList.get(0));
+
+
+
+
+
+
+
+
+//                        FarmingMode foodList = new FarmingMode(dataState, bot, playerAction);
+//                        foodList.resolveFarmingFoodAction();
                     } else {
+                        playerAction.action = PlayerActions.FORWARD;
                         playerAction.heading = new Random().nextInt(360);
                     }
-                    playerAction.action = PlayerActions.FORWARD;
-
                 }
                 /* Jangan Lupa dihapus */
             }
-            // System.out.println("HEHE");
-            // System.out.println(dataState.isBorderAncaman());
-            // System.out.println("HEHE");
-            // System.out.println("Player Heading: " + playerAction.heading);
-            // System.out.println("YANG ATAS KITA");
-            // System.out.println("Player Action: " + playerAction.action);
-            // if (gameState.playerGameObjects.size() > 1) {
-            // System.out.println("Heading Lawan: " +
-            // gameState.playerGameObjects.get(0).currentHeading);
-            // System.out.println("Heading Lawan: " +
-            // gameState.playerGameObjects.get(1).currentHeading);
-            // System.out.println();
-            // }
-
-            // if (dataState.isBorderAncaman()) {
-            // System.out.println(dataState.getBorderPosition().x + " " +
-            // dataState.getBorderPosition().y);
-            // }
-
+            
             System.out.println("Prey : " + dataState.getNPreyObject());
             System.out.println("Enem : " + dataState.getNEnemy());
-            // if (dataState.getNEnemy() > 0) {
-            // System.out.println(dataState.getPlayerObject().toString());
-            // }
-            // System.out.println(gameState.world.getRadius());
             System.out.println(bot.TorpedoSalvoCount);
-
         }
     }
 

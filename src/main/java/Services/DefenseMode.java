@@ -5,8 +5,8 @@ import Models.*;
 
 import java.util.*;
 
-/* TODO : ALGORITMA DEFENSE BERDASARKAN PEMBOBOTAN */
-// TODO : MINIMAL NEMBAK TORPEDO
+// TODO : NENTUIN SHIELD OPTIMAL ATAU KAGAk (SUM(TORPEDOSALVO.size) >= 20)
+// TODO : TELEPORTER KALO UDH KENA SANDWICH
 
 public class DefenseMode {
     // Attribut
@@ -36,9 +36,11 @@ public class DefenseMode {
 
     private int getBobotObject(GameObject object) {
         if (object.getGameObjectType() == ObjectTypes.PLAYER) {
-            return 1;
+            return 3;
         } else if (object.getGameObjectType() == ObjectTypes.GASCLOUD) {
-            return 2;
+            return 6;
+        } else if (object.getGameObjectType() == ObjectTypes.ASTEROIDFIELD){
+            return 1;
         } else {
             return 0;
         }
@@ -74,7 +76,7 @@ public class DefenseMode {
          * Hitung escapeHeading dengan rumus
          * realEscape = heading1*(faktorDistance/distance1)*bobotObject1 + ... +
          * headingN*(faktorDistance/distanceN)*bobotObjectN
-         * bobot Object: PLAYER: 1, GASCLOUD: 4, BORDER: 5
+         * bobot Object: PLAYER: 1, GASCLOUD: 2, Border: 3
          */
         for (i = 0; i < this.dataState.getNThreatObject(); i++) { // Hitung heading untuk setiap
             // ThreatObject
@@ -90,8 +92,8 @@ public class DefenseMode {
         }
         if (dataState.isBorderAncaman()) { // Jika Border Masuk ke dalam ancaman
             realEscape += (Statistic.getHeadingBetween(gFox,
-                    this.dataState.getBorderPosition()) * (faktorDistance / distanceBorder) * 3);
-            divider += ((faktorDistance / distanceBorder) * 3);
+                    this.dataState.getBorderPosition()) * (faktorDistance / distanceBorder) * 10);
+            divider += ((faktorDistance / distanceBorder) * 10);
         }
 
         // Hitung hasil akhir real escape
@@ -110,7 +112,7 @@ public class DefenseMode {
         isSandwich = false;
 
         // Jika hanya ada 1 enemy dan memungkinkan tembak
-        if (this.dataState.getNEnemy() == 1 && gFox.TorpedoSalvoCount > 0 && gFox.getSize() > 10) {
+        if (this.dataState.getNEnemy() >= 1 && dataState.isTorpedoOptimal()) {
             gFoxAction.action = PlayerActions.FIRETORPEDOES;
             System.out.println("TEMBAKKK, sisa salvo: " + gFox.TorpedoSalvoCount);
             gFoxAction.heading = Statistic.getHeadingBetween(gFox, listEnemy.get(0));
@@ -135,7 +137,7 @@ public class DefenseMode {
         } else {
             System.out.println("Mencoba Bertahan Nih");
             gFoxAction.action = PlayerActions.FORWARD;
-            gFoxAction.heading = (escapeHeading) % 360; // Opposite Direction dari resultan escape
+            gFoxAction.heading = (escapeHeading + 180) % 360; // Opposite Direction dari resultan escape
         }
     }
 }
