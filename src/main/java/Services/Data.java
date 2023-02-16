@@ -61,6 +61,7 @@ public class Data {
     private boolean feasibleAttackMode;
     private boolean isTorpedoOptimal;
     private boolean torpedoEscapeMode;
+    private boolean torpedoShieldMode;
 
     /* Constructor */
     public Data(GameObject gFox, GameState gameState) {
@@ -183,12 +184,18 @@ public class Data {
         return this.torpedoEscapeMode;
     }
 
+    public boolean isTorpedoShield(){
+        return this.torpedoShieldMode;
+    }
+
     /* Setter */
     public void setTorpedoEscape() {
         if (this.nEnemysTorpedo >= 2) {
             /* SHIELD */
+            torpedoShieldMode = true;
             torpedoEscapeMode = false;
         } else {
+            torpedoShieldMode = false;
             torpedoEscapeMode = true;
         }
     }
