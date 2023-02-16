@@ -190,13 +190,18 @@ public class Data {
 
     /* Setter */
     public void setTorpedoEscape() {
-        if (this.nEnemysTorpedo >= 2) {
+        if ((this.nEnemysTorpedo >= 2) && (this.gFox.getSize() >= 40)) {
             /* SHIELD */
             torpedoShieldMode = true;
             torpedoEscapeMode = false;
         } else {
-            torpedoShieldMode = false;
-            torpedoEscapeMode = true;
+            if(this.nEnemysTorpedo == 0){
+                torpedoShieldMode = false;
+                torpedoEscapeMode = false;
+            } else {
+                torpedoShieldMode = false;
+                torpedoEscapeMode = true;
+            }
         }
     }
     public void setThresholdDistanceAncaman() {
