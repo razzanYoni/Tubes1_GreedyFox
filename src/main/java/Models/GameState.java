@@ -7,6 +7,7 @@ public class GameState {
     public World world;
     public List<GameObject> gameObjects;
     public List<GameObject> playerGameObjects;
+    public static boolean afterBurnerOn = false;
 
     public GameState() {
         world = new World();
@@ -42,6 +43,18 @@ public class GameState {
 
     public void setPlayerGameObjects(List<GameObject> playerGameObjects) {
         this.playerGameObjects = playerGameObjects;
+    }
+
+    public static boolean isAfterBurnerOn() {
+        return afterBurnerOn;
+    }
+
+    public static void setAfterBurnerOn() {
+        afterBurnerOn = true;
+    }
+
+    public static void setAfterBurnerOff() {
+        afterBurnerOn = false;
     }
 
 }
