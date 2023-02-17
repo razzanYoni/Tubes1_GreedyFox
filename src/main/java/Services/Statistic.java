@@ -21,6 +21,25 @@ public class Statistic {
         return Math.sqrt(triangleX * triangleX + triangleY * triangleY);
     }
 
+    public static int countSudut(int absis, int ordinat){
+        Double radian;
+        if (absis == 0){
+            radian = Math.PI/2;
+        }  else {
+            radian = Math.atan2(ordinat, absis);
+        }
+        if (absis<0 && ordinat<0) {
+            radian = Math.PI + radian;
+        }
+        else if (absis>0 && ordinat<0) {
+            radian = Math.PI + radian;
+        }
+
+        var direction = toDegrees(radian);
+
+        return (direction + 360) % 360;
+    }
+
     public static int getHeadingBetween(GameObject GFox, GameObject otherObject) {
         var direction = toDegrees(Math.atan2(otherObject.getPosition().y - GFox.getPosition().y,
                 otherObject.getPosition().x - GFox.getPosition().x));
@@ -35,5 +54,20 @@ public class Statistic {
 
     public static int toDegrees(double v) {
         return (int) (v * (180 / Math.PI));
+    }
+
+    public static int headingAvoidThreat(Position object) {
+        /* F.S : Mengembalikan degree yang cocok untuk menghindar dari Torpedo Salvo */
+
+        int x = object.getX();
+        int y = object.getY();
+
+        if (((x >= 0) && (y >= 0)) || ((x < 0) && (y >= 0))) {
+            /* Kuadran I dan II */
+            return 90;
+        } else {
+            /* Kuadran III dan IV */
+            return 270;
+        }
     }
 }

@@ -2,11 +2,11 @@ package Services;
 
 import Enums.*;
 import Models.*;
-import Services.Data;
-import Services.DefenseMode;
 
 import java.util.*;
 import java.util.stream.*;
+
+import com.ctc.wstx.shaded.msv_core.reader.trex.classic.DataState;
 
 public class BotService {
     private GameObject bot;
@@ -36,24 +36,54 @@ public class BotService {
 
     public void computeNextPlayerAction(PlayerAction playerAction) {
         // collecting data for state
+        gameState.setShieldDeactivated();
         if (!gameState.getGameObjects().isEmpty()) {
-            var dataState = new Data(bot, gameState);
-            System.out.println(dataState.getnFoodObject());
-            // Determine the state
-            // System.out.println(dataState.isNeedDefenseMode());
-            if (dataState.isNeedDefenseMode()) {
-                System.out.println("TERANCAMMM");
-                var defenseMode = new DefenseMode(dataState, bot, playerAction, dataState.getThreatObject(),
-                        dataState.getPlayerObject());
-                defenseMode.ressolvingTreat();
-                playerAction = defenseMode.getPlayerActionDefend();
+            Data dataState = new Data(bot, gameState);
+
+            if (dataState.isOutsideBorder()) {
+                System.out.println("GO TO INSIDE");
+                playerAction.action = PlayerActions.FORWARD;
+                playerAction.heading = Statistic.getHeadingBetween(bot, gameState.getWorld().centerPoint);
             } else {
-                playerAction.action = PlayerActions.STOP;
-                playerAction.heading = new Random().nextInt(360);
+                /* Defense */
+                if (dataState.isNeedDefenseMode()) {
+                    System.out.println("DEFENSE");
+                    DefenseMode defenseMode = new DefenseMode(dataState, bot, playerAction, dataState.getThreatObject(),
+                            dataState.getPlayerObject(), dataState.getPlayerDistance(),
+                            dataState.getThreatObjectDistance(), gameState);
+                    defenseMode.ressolvingTreat();
+                    playerAction = defenseMode.getPlayerActionDefend();
+                } else {
+                    /* Attack */
+                    if (dataState.isFeasibleAttackMode()) {
+                        System.out.println("ATTACK");
+                        AttackMode attackMode = new AttackMode(dataState, bot, playerAction, gameState);
+                        attackMode.resolveAttackMode();
+                    } else {
+                        if (dataState.isSupernovaExist()) {
+                            System.out.println("Reach SUPERNOVA");
+                            playerAction.action = PlayerActions.FORWARD;
+                            playerAction.heading = Statistic.getHeadingBetween(bot, gameState.getWorld().centerPoint);
+                        } else {
+                            /* Farming */
+                            System.out.println("FARMINGGG");
+                            if ((dataState.getnFoodObject() > 0)) {
+                                FarmingMode foodList = new FarmingMode(dataState, bot, playerAction);
+                                foodList.resolveFarmingFoodAction();
+                            } else {
+                                playerAction.action = PlayerActions.FORWARD;
+                                playerAction.heading = new Random().nextInt(360);
+                            }
+                        }
+    
+                    }
+                }
             }
-        } else {
-            playerAction.action = PlayerActions.FORWARD;
-            playerAction.heading = 0;
+
+            System.out.println("Player ACTION: " + playerAction.getAction() + " Player HEADING: " + playerAction.getHeading());
+            System.out.println("Prey : " + dataState.getNPreyObject());
+            System.out.println("Enemy : " + dataState.getNEnemy());
+            System.out.println("TorpedoSalvoCount: " + bot.TorpedoSalvoCount);
         }
     }
 
