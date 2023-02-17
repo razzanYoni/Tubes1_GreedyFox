@@ -57,6 +57,7 @@ public class Data {
 
     // Status Data
     private boolean ancamanBorder;
+    private boolean outsideBorder;
     private boolean needDefenseMode;
     private boolean feasibleAttackMode;
     private boolean isTorpedoOptimal;
@@ -83,6 +84,7 @@ public class Data {
         // Collect Data for other Attributes
         collectingData();
         setIsTorpedoOptimal();
+        setTorpedoEscape();
     }
 
     /* Method */
@@ -148,7 +150,11 @@ public class Data {
         return nSuperFoodObject;
     }
 
-    public List<GameObject> getNTorpedoesObject(){
+    public Integer getNTorpedoesObject(){
+        return this.nEnemysTorpedo;
+    }
+
+    public List<GameObject> getTorpedoObject() {
         return this.torpedoObject;
     }
 
@@ -190,6 +196,7 @@ public class Data {
 
     /* Setter */
     public void setTorpedoEscape() {
+        /* Deskripsi : Menentukan apakah penggunaan shielda ataupun kabur dari torpedo lawan */
         if ((this.nEnemysTorpedo >= 2) && (this.gFox.getSize() >= 40)) {
             /* SHIELD */
             torpedoShieldMode = true;
@@ -204,7 +211,10 @@ public class Data {
             }
         }
     }
+
     public void setThresholdDistanceAncaman() {
+        /* Deskripsi : Mengatur threshold untuk jarak ke object ancaman (gas cloud, asteroid fields, wormhole) */
+
         Double tempThreshold;
         if (gameState.getWorld().getRadius() >= 1500) {
             tempThreshold = (Double) (gameState.getWorld().getRadius() / 4.5);
@@ -217,6 +227,8 @@ public class Data {
     }
 
     public void setThresholdDistanceEnemy() {
+        /* Deskripsi : Mengatur threshold untuk jarak ke player lain */
+
         Double tempThreshold;
         if (gameState.getWorld().getRadius() >= 1500) {
             tempThreshold = (Double) (gameState.getWorld().getRadius() / 6.25);
@@ -229,23 +241,96 @@ public class Data {
     }
 
     public void setIsTorpedoOptimal() {
-        if (this.nThreatPlayer > 0) {
-            if (((this.threatPlayerDistance.get(0) - (this.threatPlayer.get(0).getSize() * Math.sqrt(2)) - (this.gFox.getSize() * Math.sqrt(2))) <= 225.0)
-                    && (this.gFox.TorpedoSalvoCount > 0) && (this.gFox.getSize() > 20)) {
-                isTorpedoOptimal = true;
-            }
-        } else if (this.nPreyObject > 0) {
-            if (((this.preyObjectDistance.get(0) - (this.preyObject.get(0).getSize() * Math.sqrt(2)) - (this.gFox.getSize() * Math.sqrt(2))) <= 225.0)
-                && (this.gFox.TorpedoSalvoCount > 0) && (this.gFox.getSize() > 20)) {
-                isTorpedoOptimal = true;
-            }
-        } else {
-            isTorpedoOptimal = false;
-        }
+        /* Deskripsi : Mengatur apakah penggunaan torpedo optimal atau tidak */
+
+        if (this.nThreatPlayer > 0
+            && (((this.threatPlayerDistance.get(0) 
+                  - (this.threatPlayer.get(0).getSize() * Math.sqrt(2)) 
+                  - (this.gFox.getSize() * Math.sqrt(2))) <= 235.0)
+            && (this.gFox.getSize() >= 20))
+            && (this.gFox.TorpedoSalvoCount > 0)
+        ) {
+
+           if (this.gFox.TorpedoSalvoCount >= 5
+                   && this.gFox.getSize() >= 40) {
+
+                        isTorpedoOptimal = true;
+
+           } else if (this.gFox.TorpedoSalvoCount >= 4
+                   && this.gFox.getSize() < 5
+                   && this.gFox.getSize() >= 35) {
+                    
+                        isTorpedoOptimal = true;
+
+           } else if (this.gFox.TorpedoSalvoCount >= 3
+                    && this.gFox.getSize() < 4
+                    && this.gFox.getSize() >= 30) {
+
+                        isTorpedoOptimal = true;
+
+           } else if (this.gFox.TorpedoSalvoCount >= 2
+                    && this.gFox.getSize() < 3
+                    && this.gFox.getSize() >= 25) {
+
+                        isTorpedoOptimal = true;
+               
+           } else if (this.gFox.TorpedoSalvoCount >= 1
+                    && this.gFox.getSize() < 2
+                    && this.gFox.getSize() >= 20) {
+               
+                        isTorpedoOptimal = true;
+           } else {
+               isTorpedoOptimal = false;
+           }
+
+        } else if (this.nPreyObject > 0
+                && (((this.preyObjectDistance.get(0) 
+                    - (this.preyObject.get(0).getSize() * Math.sqrt(2)) 
+                    - (this.gFox.getSize() * Math.sqrt(2))) <= 235.0)
+                && (this.gFox.getSize() >= 25))
+                && (this.gFox.TorpedoSalvoCount > 0)
+        ) {
+
+           if (this.gFox.TorpedoSalvoCount >= 5
+                   && this.gFox.getSize() >= 40) {
+               
+                    isTorpedoOptimal = true;
+
+           } else if (this.gFox.TorpedoSalvoCount >= 4
+                   && this.gFox.getSize() >= 35) {
+               
+                    isTorpedoOptimal = true;
+
+           } else if (this.gFox.TorpedoSalvoCount >= 3
+                   && this.gFox.getSize() >= 30) {
+               
+                    isTorpedoOptimal = true;
+
+           } else if (this.gFox.TorpedoSalvoCount >= 2
+                   && this.gFox.getSize() >= 25) {
+              
+                    isTorpedoOptimal = true;
+
+           } else if (this.gFox.TorpedoSalvoCount >= 1
+                   && this.gFox.TorpedoSalvoCount < 2
+                   && this.gFox.getSize() >= 20) {
+               
+                    isTorpedoOptimal = true;
+
+           } else {
+                
+                isTorpedoOptimal = false;
+           }
+
+        } else /* Tidak ada Enemy */ {isTorpedoOptimal = false;}
     }
 
     /* Functional */
     private void checkFoodObject(GameObject other) {
+        /* Deskripsi : Mengecek apakah ada food atau superfood 
+         * F.S. : food dan superfood terurut berdasarkan distance
+        */
+
         Double distance;
         distance = Statistic.getDistanceBetween(this.gFox, other);
         if (other.getGameObjectType() == ObjectTypes.FOOD) {
@@ -291,37 +376,40 @@ public class Data {
         }
     }
     private void checkThreatObject(GameObject other) {
+        /* Deskripsi : Mengecek apakah ada threat object di sekitar threshold */
         /* F.S : GASCLOUD DAN ASTEROIDFIELD TERURUT MEMBESAR */
         Double distance;
         distance = Statistic.getDistanceBetween(this.gFox, other);
 
         if (distance < (this.thresholdDistanceAncaman + other.getSize() * Math.sqrt(2))) {
-            if (other.getGameObjectType() == ObjectTypes.GASCLOUD
-                    || other.getGameObjectType() == ObjectTypes.ASTEROIDFIELD) {
-                /* Object threat terurut berdasarkan distance */
-                if (nThreatObject == 0) {
+            /* Object threat terurut berdasarkan distance */
+            if (nThreatObject == 0) {
+                threatObject.add(other);
+                threatObjectDistance.add(distance);
+            } else {
+                if (this.threatObjectDistance.get(nThreatObject - 1) <= distance) {
                     threatObject.add(other);
                     threatObjectDistance.add(distance);
                 } else {
-                    if (this.threatObjectDistance.get(nThreatObject - 1) <= distance) {
-                        threatObject.add(other);
-                        threatObjectDistance.add(distance);
-                    } else {
-                        for (int i = 0; i < nThreatObject; i++) {
-                            if (distance < this.threatObjectDistance.get(i)) {
-                                threatObject.add(i, other);
-                                threatObjectDistance.add(i, distance);
-                                break;
-                            }
+                    for (int i = 0; i < nThreatObject; i++) {
+                        if (distance < this.threatObjectDistance.get(i)) {
+                            threatObject.add(i, other);
+                            threatObjectDistance.add(i, distance);
+                            break;
                         }
                     }
                 }
-                nThreatObject++;
             }
+            nThreatObject++;
         }
     }
 
+
     private void checkThreatPlayer(GameObject other){
+        /* Deskripsi: Mengecek Apakah ada player di sekitar threshold atau tidak 
+         * F.S : threatPlayer atau Prey terurut berdasarkan distance
+        */
+
         Double distance;
         distance = Statistic.getDistanceBetween(this.gFox, other);
 
@@ -366,7 +454,8 @@ public class Data {
                 }
                 nPreyObject++;
             }
-        } else if ((distance < (getThresholdDistanceAncaman() + other.getSize() + (gameState.getWorld().getRadius()/10))) && ((other.getSize() - gFox.getSize() + 10.0) < 0)) {
+        } else if ((distance < (thresholdThreatPlayer + other.getSize() + (gameState.getWorld().getRadius()/10))) 
+                    && ((other.getSize() - gFox.getSize() + 10.0) < 0)) {
             if (this.nPreyObject == 0) {
                 preyObject.add(other);
                 preyObjectDistance.add(distance);
@@ -390,10 +479,16 @@ public class Data {
 
     private void checkEnemysTorpedo(GameObject other) {
         /* F.S : List Of Enemy's Torpedoes */
+        /* TODO : Cek Heading Enemy atau Bukan */
+
         Double distance;
         distance = Statistic.getDistanceBetween(this.gFox, other);
 
-        if (distance < (300 + gFox.getSize() * Math.sqrt(2))) {
+        /* Check Player Action nTorpedoes - torpedoesCount current */
+
+
+
+        if (distance < (250 + gFox.getSize() * Math.sqrt(2))) {
             if (other.getGameObjectType() == ObjectTypes.TORPEDOSALVOCOUNT) {
                 torpedoObject.add(0,other);
                 nEnemysTorpedo++;
@@ -402,20 +497,29 @@ public class Data {
     }
 
     private void checkBorderAncaman() {
-        this.ancamanBorder = false; // inisialisasi
-        /* Menentukan Border sebagai ancaman atau tidak */
+        /* Deskripsi : Menentukan Border sebagai ancaman atau tidak 
+         * F.S : Jika border termasuk ancaman, maka ancamanBorder = true dan akan men-set border dengan position terdekat oleh GreedyFox
+        */
+        
+        /* Inisialisasi */
+        this.ancamanBorder = false;
+        this.outsideBorder = false; 
         Position selfPosition = this.gFox.getPosition();
         int xSelf = selfPosition.getX();
         int ySelf = selfPosition.getY();
         Integer radius = this.gameState.getWorld().getRadius();
 
+        /* Menentukan Jarak dari GreedyFox ke Center */
         Double distanceselfCenter = Statistic.getDistanceBetween(selfPosition,
                 this.gameState.getWorld().getCenterPoint());
 
+        /* Menentukan Jarak dari GreedyFox ke Border */
         Double distance = radius - distanceselfCenter;
 
         /* Menentukan Kuadran */
-        if ((distance - gFox.getSize() * Math.sqrt(2)) < 75.0) { // Jika border termasuk ancaman
+        if ((distance - (gFox.getSize() * (Math.sqrt(2) + 0.2f))) < (this.gameState.getWorld().getRadius()/10) + 30.0) {
+            /*Jika Border masuk threshold (dekat) anggap sebagai ancaman*/
+             
             if (xSelf == 0) {
                 if (ySelf > 0) {
                     this.border = new Position(0, radius);
@@ -429,36 +533,56 @@ public class Data {
                     this.border = new Position(radius, 0);
                 } else if (ySelf > 0) {
                     Double theta = (Double) Math.atan2(ySelf, xSelf);
-                    this.border = new Position((int) Math.round(radius * Math.cos(theta)),
-                            (int) Math.round(radius * Math.sin(theta)));
+
+                    this.border = new Position  (
+                                                (int) Math.round(radius * Math.cos(theta)),
+                                                (int) Math.round(radius * Math.sin(theta))
+                                                );
                 } else if (ySelf < 0) {
                     Double theta = (Double) Math.atan2(ySelf, xSelf);
-                    this.border = new Position((int) Math.round(radius * Math.cos(theta)),
-                            (int) Math.round(radius * Math.sin(theta)));
+
+                    this.border = new Position  (
+                                                (int) Math.round(radius * Math.cos(theta)),
+                                                (int) Math.round(radius * Math.sin(theta))
+                                                );
                 }
             } else if (xSelf < 0) {
                 if (ySelf == 0) {
                     this.border = new Position(-radius, 0);
                 } else if (ySelf > 0) {
                     Double theta = (Double) Math.atan2(ySelf, xSelf);
-                    this.border = new Position((int) Math.round(radius * Math.cos(theta)),
-                            (int) Math.round(radius * Math.sin(theta)));
+
+                    this.border = new Position  (   
+                                                (int) Math.round(radius * Math.cos(theta)),
+                                                (int) Math.round(radius * Math.sin(theta))
+                                                );
                 } else if (ySelf < 0) {
                     Double theta = (Double) Math.atan2(ySelf, xSelf);
-                    this.border = new Position((int) Math.round(radius * Math.cos(theta)),
-                            (int) Math.round(radius * Math.sin(theta)));
+                    this.border = new Position  (   
+                                                (int) Math.round(radius * Math.cos(theta)),
+                                                (int) Math.round(radius * Math.sin(theta))
+                                                );
                 }
             }
             this.ancamanBorder = true;
+            this.outsideBorder = false;
+        } else if (distance < 0) {
+            this.outsideBorder = true;
+            this.ancamanBorder = true;
         } else {
-            // Kondisi ketika threshold tidak terpenuhi yaitu jauh
             this.ancamanBorder = false;
+            this.outsideBorder = false;
         }
     }
+
     private void collectingData() {
+        /* Deskripsi : Memperoleh semua data yang akan digunakan */
+        
+        // Inisialisasi
         int i;
         List<GameObject> listGameObjects = this.gameState.getGameObjects();
         List<GameObject> listPlayer = this.gameState.getPlayerGameObjects();
+
         // Collecting Border Threat Data
         checkBorderAncaman();
 
@@ -466,19 +590,30 @@ public class Data {
         for (i = 0; i < listGameObjects.size(); i++) {
             if (listGameObjects.get(i).id != this.gFox.id) { // Jika bukan diri sendiri, lakukan pengecekan
                 GameObject currentObject= listGameObjects.get(i);
-                if ((currentObject.getGameObjectType() == ObjectTypes.FOOD) || (currentObject.getGameObjectType() == ObjectTypes.SUPERFOOD))
+                if ((currentObject.getGameObjectType() == ObjectTypes.FOOD)
+                    || (currentObject.getGameObjectType() == ObjectTypes.SUPERFOOD))
                 {
+                    /* Deskripsi : Mengambil data Food atau SuperFood */
                     checkFoodObject(currentObject);
+
                 } else {
-                    if (currentObject.getGameObjectType() == ObjectTypes.GASCLOUD || currentObject.getGameObjectType() == ObjectTypes.ASTEROIDFIELD){
+                    if (currentObject.getGameObjectType() == ObjectTypes.GASCLOUD
+                        || currentObject.getGameObjectType() == ObjectTypes.ASTEROIDFIELD
+                        || currentObject.getGameObjectType() == ObjectTypes.WORMHOLE) 
+                        {
+                            /* Deskripsi : Mengambil data Gas Cloud, Asteroid Field, dan Worm Hole */
                         checkThreatObject(currentObject);
+
                     } else {
+
                         checkEnemysTorpedo(currentObject);
+                    
                     }
                 }
             }
         }
 
+        // Collecting Player Threat Data
         for (i = 0; i < listPlayer.size(); i++) {
             if (listPlayer.get(i).id != this.gFox.id) { // Jika bukan diri sendiri, lakukan pengecekan
                 checkThreatPlayer(listPlayer.get(i));

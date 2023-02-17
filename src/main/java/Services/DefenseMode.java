@@ -5,9 +5,6 @@ import Models.*;
 
 import java.util.*;
 
-// TODO : NENTUIN SHIELD OPTIMAL ATAU KAGAk (SUM(TORPEDOSALVO.size) >= 20)
-// TODO : TELEPORTER KALO UDH KENA SANDWICH
-
 public class DefenseMode {
     // Attribut
     private Data dataState;
@@ -36,11 +33,21 @@ public class DefenseMode {
 
     private int getBobotObject(GameObject object) {
         if (object.getGameObjectType() == ObjectTypes.PLAYER) {
-            return 3;
+            return 5;
         } else if (object.getGameObjectType() == ObjectTypes.GASCLOUD) {
-            return 6;
+            if (object.getSize() >= 60 ) {
+                return 9;
+            } else if (object.getSize() >= 40) {
+                return 5;
+            } else if (object.getSize() >= 20) {
+                return 3;
+            } else {
+                return 2;
+            }
         } else if (object.getGameObjectType() == ObjectTypes.ASTEROIDFIELD){
             return 1;
+        } else if(object.getGameObjectType() == ObjectTypes.WORMHOLE){
+            return 2;
         } else {
             return 0;
         }
@@ -92,8 +99,8 @@ public class DefenseMode {
         }
         if (dataState.isBorderAncaman()) { // Jika Border Masuk ke dalam ancaman
             realEscape += (Statistic.getHeadingBetween(gFox,
-                    this.dataState.getBorderPosition()) * (faktorDistance / distanceBorder) * 10);
-            divider += ((faktorDistance / distanceBorder) * 10);
+                    this.dataState.getBorderPosition()) * (faktorDistance / distanceBorder) * 16);
+            divider += ((faktorDistance / distanceBorder) * 16);
         }
 
         // Hitung hasil akhir real escape
@@ -111,33 +118,42 @@ public class DefenseMode {
         escapeHeading = 0; // default
         isSandwich = false;
 
-        // Jika hanya ada 1 enemy dan memungkinkan tembak
-        if (this.dataState.getNEnemy() >= 1 && dataState.isTorpedoOptimal()) {
-            gFoxAction.action = PlayerActions.FIRETORPEDOES;
-            System.out.println("TEMBAKKK, sisa salvo: " + gFox.TorpedoSalvoCount);
-            gFoxAction.heading = Statistic.getHeadingBetween(gFox, listEnemy.get(0));
-        } else {
-            // Jika tidak memungkinkan menembak atau nEnemy != 1
-            escapeHeading = countEscapeHeading();
-            isSandwich = (escapeHeading == 0); // Pengecekan Sandwich
-        }
+        if (dataState.isTorpedoEscape() || dataState.isTorpedoShield()) {
+            if (dataState.isTorpedoShield()) {
+                /* SHIELD CASE */
+                gFoxAction.action = PlayerActions.ACTIVATESHIELD;
+                System.out.println("Activate Shield");
+            } else {
+                /* Escape Torpedoes */
+                gFoxAction.action = PlayerActions.FORWARD;
+                System.out.println("Escape Torpedoes");
+            }
+            /* Ini belum ditambahin heading antara gfBot dengan torpedoes */
+            gFoxAction.heading = (dataState.getNTorpedoesObject() + Statistic.headingAvoidThreat(gFox.getPosition())) % 360;
+        } else {// Jika hanya ada 1 enemy dan memungkinkan tembak
+            if ((this.dataState.getNEnemy() >= 1) && dataState.isTorpedoOptimal()) {
+                gFoxAction.action = PlayerActions.FIRETORPEDOES;
+                System.out.println("FIRE TORPEDOES, SALVO COUNT: " + gFox.TorpedoSalvoCount);
+                gFoxAction.heading = Statistic.getHeadingBetween(gFox, listEnemy.get(0));
+            } else {
+                // Jika tidak memungkinkan menembak atau nEnemy != 1
+                escapeHeading = countEscapeHeading();
+                isSandwich = (escapeHeading == 0); // Pengecekan Sandwich
+            }
 
-        if (isSandwich || escapeHeading == 0) { // Penanganan Kasus Sandwich
-            // Belum dihandle
-            /*
-             * Strategi
-             * Cari celah jika sandwich hanya dua ancaman
-             * Jika lebih dari dua, go to asteroid fields jika ada
-             * Jika asteroid fields tak ada pertimbangkan penggunaan teleporter
-             * Jika pilihan antara trobos gas cloud atau enemy, trobos gas cloud
-             * Jika hanya ada enemy, bergerak menuju enemy terkecil
-             */
+            if (isSandwich || escapeHeading == 0) { // Penanganan Kasus Sandwich
 
-            System.out.println("Mencoba Untuk Bertahan Dari Kejammnya Kehidupan");
-        } else {
-            System.out.println("Mencoba Bertahan Nih");
-            gFoxAction.action = PlayerActions.FORWARD;
-            gFoxAction.heading = (escapeHeading + 180) % 360; // Opposite Direction dari resultan escape
+                if(isSandwich) {
+                    /* Jika Sanwich maka player akan menghindar tegak lurus dengan ancaman */
+                    gFoxAction.action = PlayerActions.FORWARD;
+                    gFoxAction.heading = (escapeHeading + Statistic.headingAvoidThreat(gFox.getPosition())) % 360;
+                    System.out.println("Sandwich Case");
+                }
+            } else {
+                System.out.println("Defense Mode Activated");
+                gFoxAction.action = PlayerActions.FORWARD;
+                gFoxAction.heading = (escapeHeading + 180) % 360; // Opposite Direction dari resultan escape
+            }
         }
     }
 }

@@ -9,9 +9,6 @@ import java.util.stream.*;
 // File : FarmingMode.java
 // Untuk memilih apakah memakan food biasa atau super food
 
-// ??? : STOP AFTER BURNER EDGE CASE BELUM TER-HANDLE
-// TODO : KASUS GALAU
-
 public class FarmingMode {
     // Atribut
     private Double afterburner_food_threshold;
@@ -56,15 +53,11 @@ public class FarmingMode {
 
     public void resolveFarmingFoodAction() {
         gfAction.action = PlayerActions.FORWARD;
-
-        // KALO MAU PAKE HANDLE LAGI KASUS GERAK AFTERBURNER SAMA STOPAFTERBURNER
-//        if (isBurnerNeeded()) {
-//            gfAction.action = PlayerActions.STARTAFTERBURNER;
-//        }
-//        else {
-//            gfAction.action = PlayerActions.STOPAFTERBURNER;
-//        }
-
         gfAction.setHeading(Statistic.getHeadingBetween(gfbot ,isBurnerNeeded() ? gameDataFood.getSuperFoodObject().get(0) : gameDataFood.getFoodObject().get(0)));
+        if (isBurnerNeeded()) {
+            System.out.println("Reach Nearest SuperFood");
+        } else {
+            System.out.println("Reach Nearest Food");
+        }
     }
 }

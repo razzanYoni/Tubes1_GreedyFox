@@ -56,15 +56,17 @@ public class Statistic {
         return (int) (v * (180 / Math.PI));
     }
 
-    public static int headingAvoidTorpedo(Position object) {
+    public static int headingAvoidThreat(Position object) {
         /* F.S : Mengembalikan degree yang cocok untuk menghindar dari Torpedo Salvo */
 
         int x = object.getX();
         int y = object.getY();
 
         if (((x >= 0) && (y >= 0)) || ((x < 0) && (y >= 0))) {
+            /* Kuadran I dan II */
             return 90;
         } else {
+            /* Kuadran III dan IV */
             return 270;
         }
     }

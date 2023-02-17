@@ -7,14 +7,6 @@ import java.sql.SQLOutput;
 import java.util.*;
 import java.util.stream.*;
 
-// ToDo: 
-// State Menyerang (AttackMode.java)
-// if  (not inThresHoldAfterBurner)
-//          Go to Enemy with teleporter till teleporter distance with enemy <= 10
-//       else if   ( inThresHoldAfterBurner)
-//          Go to Enemy with afterburner ampe doi tewas
-// Use torpedosalvo
-
 public class AttackMode {
     // Atribut
     private Data dataAttack;
@@ -68,29 +60,29 @@ public class AttackMode {
         choosePrey();
         go();
         gAction.setHeading(Statistic.getHeadingBetween(gFox, prey));
-        if (Statistic.getDistanceBetween(gFox, prey) < closePrey)
+        if (dataAttack.isTorpedoOptimal())
         {
             // jika jarak ke mangsa dekat
-            UseAfterburner();
+//            UseAfterburner();
+            System.out.println("Attack Using Torpedo");
+            FireTorpedo();
         }
         else
         {
-            StopAfterburner();
-            if (dataAttack.isTorpedoOptimal())
-            {
-                System.out.println("SIUU Torpedo!");
-                FireTorpedo();
-            } else if ((gFox.getSize() - 20) > (prey.getSize() + 10)) {
+            // StopAfterburner();
+            if ((gFox.getSize() - 40) > (prey.getSize() + 10)) {
+		    gAction.setHeading(Statistic.getHeadingBetween(gFox, prey));
+            
+            if ((gFox.TeleporterCount > 0))  {
+                /* Teleport Mode */
+                Teleport();
                 gAction.setHeading(Statistic.getHeadingBetween(gFox, gameState.getWorld().getCenterPoint()));
-                // cek apakah teleport aman
-                System.out.println("Fire Teleport -> \b ");
-                if (gFox.TeleporterCount > 0)  {
-                    Teleport();
-                    System.out.println("Zuoppp Tp");
+                System.out.println("Attack Mode Using Teleport");
                 } else {
-                    FireTeleport();
-                    System.out.println("TP PENDAHULUAN");
-                }
+                /* Pursuit Mode */
+                go();
+                System.out.println("Pursuit The Enemy");
+                } 
             }
         }
     }
@@ -104,8 +96,6 @@ public class AttackMode {
 
         // Mencari yang paling dekat dari tele
 
-
-        // ?????????
         i = 1; found = false;
         while (i < dataAttack.getNPreyObject() && !found) {
             if (dataAttack.getPreyObjectDistance().get(i) > closeTele - 3 && dataAttack.getPreyObjectDistance().get(i) < closeTele + 3) {
