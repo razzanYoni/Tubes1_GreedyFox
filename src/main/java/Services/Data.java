@@ -18,7 +18,7 @@ import java.lang.Math;
 public class Data {
     /* Atribute */
     // Game Data
-    private GameState gameState;
+    public GameState gameState;
     private GameObject gFox;
 
     // List of Object
@@ -246,38 +246,13 @@ public class Data {
         if (this.nThreatPlayer > 0
             && (((this.threatPlayerDistance.get(0) 
                   - (this.threatPlayer.get(0).getSize() * Math.sqrt(2)) 
-                  - (this.gFox.getSize() * Math.sqrt(2))) <= 235.0)
-            && (this.gFox.getSize() >= 20))
+                  - (this.gFox.getSize() * Math.sqrt(2))) <= 350.0)
+            && (this.gFox.getSize() >= 40))
             && (this.gFox.TorpedoSalvoCount > 0)
         ) {
 
-           if (this.gFox.TorpedoSalvoCount >= 5
-                   && this.gFox.getSize() >= 40) {
+           if (this.gFox.TorpedoSalvoCount > 0) {
 
-                        isTorpedoOptimal = true;
-
-           } else if (this.gFox.TorpedoSalvoCount >= 4
-                   && this.gFox.getSize() < 5
-                   && this.gFox.getSize() >= 35) {
-                    
-                        isTorpedoOptimal = true;
-
-           } else if (this.gFox.TorpedoSalvoCount >= 3
-                    && this.gFox.getSize() < 4
-                    && this.gFox.getSize() >= 30) {
-
-                        isTorpedoOptimal = true;
-
-           } else if (this.gFox.TorpedoSalvoCount >= 2
-                    && this.gFox.getSize() < 3
-                    && this.gFox.getSize() >= 25) {
-
-                        isTorpedoOptimal = true;
-               
-           } else if (this.gFox.TorpedoSalvoCount >= 1
-                    && this.gFox.getSize() < 2
-                    && this.gFox.getSize() >= 20) {
-               
                         isTorpedoOptimal = true;
            } else {
                isTorpedoOptimal = false;
@@ -286,34 +261,13 @@ public class Data {
         } else if (this.nPreyObject > 0
                 && (((this.preyObjectDistance.get(0) 
                     - (this.preyObject.get(0).getSize() * Math.sqrt(2)) 
-                    - (this.gFox.getSize() * Math.sqrt(2))) <= 235.0)
-                && (this.gFox.getSize() >= 25))
+                    - (this.gFox.getSize() * Math.sqrt(2))) <= 350.0)
+                && (this.gFox.getSize() >= 40))
                 && (this.gFox.TorpedoSalvoCount > 0)
         ) {
 
-           if (this.gFox.TorpedoSalvoCount >= 5
+           if (this.gFox.TorpedoSalvoCount > 0
                    && this.gFox.getSize() >= 40) {
-               
-                    isTorpedoOptimal = true;
-
-           } else if (this.gFox.TorpedoSalvoCount >= 4
-                   && this.gFox.getSize() >= 35) {
-               
-                    isTorpedoOptimal = true;
-
-           } else if (this.gFox.TorpedoSalvoCount >= 3
-                   && this.gFox.getSize() >= 30) {
-               
-                    isTorpedoOptimal = true;
-
-           } else if (this.gFox.TorpedoSalvoCount >= 2
-                   && this.gFox.getSize() >= 25) {
-              
-                    isTorpedoOptimal = true;
-
-           } else if (this.gFox.TorpedoSalvoCount >= 1
-                   && this.gFox.TorpedoSalvoCount < 2
-                   && this.gFox.getSize() >= 20) {
                
                     isTorpedoOptimal = true;
 
@@ -488,7 +442,7 @@ public class Data {
 
 
 
-        if (distance < (250 + gFox.getSize() * Math.sqrt(2))) {
+        if (distance < (350 + gFox.getSize() * Math.sqrt(2))) {
             if (other.getGameObjectType() == ObjectTypes.TORPEDOSALVOCOUNT) {
                 torpedoObject.add(0,other);
                 nEnemysTorpedo++;

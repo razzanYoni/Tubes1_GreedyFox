@@ -8,6 +8,8 @@ public class GameState {
     public List<GameObject> gameObjects;
     public List<GameObject> playerGameObjects;
     public static boolean afterBurnerOn = false;
+    public static boolean shieldActivated = false;
+    public static double shieldTick;
 
     public GameState() {
         world = new World();
@@ -57,4 +59,22 @@ public class GameState {
         afterBurnerOn = false;
     }
 
+    public boolean isShieldActivated() {
+        return shieldActivated;
+    }
+
+    public void setShieldActivated() {
+        shieldActivated = true;
+        shieldTick = 0;
+        // shieldComplement = false;
+    }
+
+    public static void setShieldDeactivated() {
+        shieldTick+= 0.4;
+        if (shieldTick == 20) {
+            shieldActivated = false;
+            shieldTick = 0;
+        }
+        // shieldComplement = true;
+    }
 }

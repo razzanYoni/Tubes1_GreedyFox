@@ -118,18 +118,29 @@ public class DefenseMode {
         escapeHeading = 0; // default
         isSandwich = false;
 
-        if (dataState.isTorpedoEscape() || dataState.isTorpedoShield()) {
-            if (dataState.isTorpedoShield()) {
+        if ((dataState.isTorpedoEscape() || dataState.isTorpedoShield()) ) {
+            
+            if (dataState.isTorpedoShield() && (!dataState.gameState.isShieldActivated())) {
                 /* SHIELD CASE */
                 gFoxAction.action = PlayerActions.ACTIVATESHIELD;
                 System.out.println("Activate Shield");
+                dataState.gameState.setShieldActivated();
+
+                /* Ini belum ditambahin heading antara gfBot dengan torpedoes */
+                gFoxAction.heading = (dataState.getNTorpedoesObject() + Statistic.headingAvoidThreat(gFox.getPosition())) % 360;
             } else {
                 /* Escape Torpedoes */
-                gFoxAction.action = PlayerActions.FORWARD;
-                System.out.println("Escape Torpedoes");
+                if ((gFox.TorpedoSalvoCount > 0) && (dataState.getNEnemy() > 0)){
+                    gFoxAction.action = PlayerActions.FIRETORPEDOES;
+                    gFoxAction.heading = Statistic.getHeadingBetween(gFox, listEnemy.get(0));
+                    System.out.println("FIRE ENEMY'S TORPEDOES");
+                } else {
+                    gFoxAction.action = PlayerActions.FORWARD;
+                    System.out.println("Escape Torpedoes");
+                    /* Ini belum ditambahin heading antara gfBot dengan torpedoes */
+                    gFoxAction.heading = (dataState.getNTorpedoesObject() + Statistic.headingAvoidThreat(gFox.getPosition())) % 360;
+                }
             }
-            /* Ini belum ditambahin heading antara gfBot dengan torpedoes */
-            gFoxAction.heading = (dataState.getNTorpedoesObject() + Statistic.headingAvoidThreat(gFox.getPosition())) % 360;
         } else {// Jika hanya ada 1 enemy dan memungkinkan tembak
             if ((this.dataState.getNEnemy() >= 1) && dataState.isTorpedoOptimal()) {
                 gFoxAction.action = PlayerActions.FIRETORPEDOES;

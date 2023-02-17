@@ -34,6 +34,7 @@ public class BotService {
 
     public void computeNextPlayerAction(PlayerAction playerAction) {
         // collecting data for state
+        gameState.setShieldDeactivated();
         if (!gameState.getGameObjects().isEmpty()) {
             Data dataState = new Data(bot, gameState);
 

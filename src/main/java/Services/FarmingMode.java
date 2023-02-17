@@ -47,7 +47,7 @@ public class FarmingMode {
             var rf = gameDataFood.getFoodObjectDistance().get(0);
             var sf = gameDataFood.getSuperFoodObjectDistance().get(0);
             /* superfood sama isburnerneeded*/
-            return (rf < (sf + afterburner_food_threshold*0.1));
+            return (sf < rf);
         }
     }
 
