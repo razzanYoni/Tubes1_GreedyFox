@@ -12,10 +12,12 @@ public class DefenseMode {
     private PlayerAction gFoxAction;
     private List<GameObject> listAncaman, listEnemy; // listAncaman minimal berukuran 1, ListEnemy bisa kosong
     private List<Double> threatPlayerDistance, threatObjectDistance;
+    private GameState gameState;
 
     // Constructor
     public DefenseMode(Data dataState, GameObject gFox, PlayerAction gFoxAction, List<GameObject> listAncaman,
-            List<GameObject> listEnemy, List<Double> threatPlayerDistance, List<Double> threatObjectDistance) {
+            List<GameObject> listEnemy, List<Double> threatPlayerDistance, List<Double> threatObjectDistance,
+            GameState gameState) {
         this.gFox = gFox;
         this.gFoxAction = gFoxAction;
         this.dataState = dataState;
@@ -23,6 +25,7 @@ public class DefenseMode {
         this.listEnemy = listEnemy;
         this.threatObjectDistance = threatObjectDistance;
         this.threatPlayerDistance = threatPlayerDistance;
+        this.gameState = gameState;
     }
 
     // Method
@@ -36,9 +39,9 @@ public class DefenseMode {
             return 5;
         } else if (object.getGameObjectType() == ObjectTypes.GASCLOUD) {
             if (object.getSize() >= 60 ) {
-                return 9;
+                return 7;
             } else if (object.getSize() >= 40) {
-                return 5;
+                return 4;
             } else if (object.getSize() >= 20) {
                 return 3;
             } else {
@@ -99,8 +102,8 @@ public class DefenseMode {
         }
         if (dataState.isBorderAncaman()) { // Jika Border Masuk ke dalam ancaman
             realEscape += (Statistic.getHeadingBetween(gFox,
-                    this.dataState.getBorderPosition()) * (faktorDistance / distanceBorder) * 16);
-            divider += ((faktorDistance / distanceBorder) * 16);
+                    this.dataState.getBorderPosition()) * (faktorDistance / distanceBorder) * 19);
+            divider += ((faktorDistance / distanceBorder) * 19);
         }
 
         // Hitung hasil akhir real escape
@@ -120,7 +123,7 @@ public class DefenseMode {
 
         if ((dataState.isTorpedoEscape() || dataState.isTorpedoShield()) ) {
             
-            if (dataState.isTorpedoShield() && (!dataState.gameState.isShieldActivated())) {
+            if (dataState.isTorpedoShield() && (!gameState.isShieldActivated())) {
                 /* SHIELD CASE */
                 gFoxAction.action = PlayerActions.ACTIVATESHIELD;
                 System.out.println("Activate Shield");

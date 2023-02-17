@@ -8,12 +8,6 @@ import java.util.stream.*;
 
 import java.lang.Math;
 
-// TODO : THRESHOLD ATTACK
-// TODO : THRESHOLD FARMING
-// TODO : THRESHOLD TORPEDO OPTIMAL (SIZE DAN DISTANCE)
-
-// TODO : arah, jarak, size gfbot
-// TODO : KUADRAN 1 2 TURUN, KUADRAN 3 4 NAEK
 
 public class Data {
     /* Atribute */
@@ -63,6 +57,10 @@ public class Data {
     private boolean isTorpedoOptimal;
     private boolean torpedoEscapeMode;
     private boolean torpedoShieldMode;
+    private boolean superNovaExist;
+    private boolean playerAroundCenter;
+    private boolean teleportOutsideBorder;
+    private boolean teleportOneEnemy;
 
     /* Constructor */
     public Data(GameObject gFox, GameState gameState) {
@@ -79,6 +77,10 @@ public class Data {
         this.feasibleAttackMode = false;
         this.resultanDistanceNonTeleport = 2;
         this.nEnemysTorpedo = 0;
+        this.superNovaExist = false;
+        this.playerAroundCenter = false;
+        this.teleportOutsideBorder = false;
+        this.teleportOneEnemy = false;
         setThresholdDistanceAncaman();
         setThresholdDistanceEnemy();
         // Collect Data for other Attributes
@@ -194,7 +196,24 @@ public class Data {
         return this.torpedoShieldMode;
     }
 
+    public boolean isSupernovaExist() {
+        return this.superNovaExist; 
+    }
+
+    public boolean isTeleportOutsideBorder() {
+        return this.teleportOutsideBorder;
+    }
+
+    public boolean isOutsideBorder() {
+        return this.outsideBorder;
+    }
+
+    public boolean isTeleportOneEnemy() {
+        return this.teleportOneEnemy;
+    }
+
     /* Setter */
+
     public void setTorpedoEscape() {
         /* Deskripsi : Menentukan apakah penggunaan shielda ataupun kabur dari torpedo lawan */
         if ((this.nEnemysTorpedo >= 2) && (this.gFox.getSize() >= 40)) {
@@ -242,13 +261,28 @@ public class Data {
 
     public void setIsTorpedoOptimal() {
         /* Deskripsi : Mengatur apakah penggunaan torpedo optimal atau tidak */
+        Double tempThreshold;
+        if (gameState.getWorld().getRadius() >= 2000) {
+            tempThreshold = gameState.getWorld().getRadius() / 3.5;
+        } else if (gameState.getWorld().getRadius() >= 1500) {
+            tempThreshold = gameState.getWorld().getRadius() / 3.0;
+        } else if (gameState.getWorld().getRadius() >= 1000) {
+            tempThreshold = gameState.getWorld().getRadius() / 2.0;
+        } else if (gameState.getWorld().getRadius() >= 700) {
+            tempThreshold = gameState.getWorld().getRadius() / 1.5;
+        } else {
+            tempThreshold = gameState.getWorld().getRadius() / 1.3;
+        }
 
         if (this.nThreatPlayer > 0
-            && (((this.threatPlayerDistance.get(0) 
+            && ((((this.threatPlayerDistance.get(0) 
                   - (this.threatPlayer.get(0).getSize() * Math.sqrt(2)) 
-                  - (this.gFox.getSize() * Math.sqrt(2))) <= 350.0)
+                  - (this.gFox.getSize() * Math.sqrt(2))) <= (tempThreshold))
             && (this.gFox.getSize() >= 40))
             && (this.gFox.TorpedoSalvoCount > 0)
+            // || (this.gFox.getSize() >= 55)
+            // && (this.gFox.TorpedoSalvoCount > 0)
+            )
         ) {
 
            if (this.gFox.TorpedoSalvoCount > 0) {
@@ -259,11 +293,14 @@ public class Data {
            }
 
         } else if (this.nPreyObject > 0
-                && (((this.preyObjectDistance.get(0) 
+                && ((((this.preyObjectDistance.get(0) 
                     - (this.preyObject.get(0).getSize() * Math.sqrt(2)) 
-                    - (this.gFox.getSize() * Math.sqrt(2))) <= 350.0)
+                    - (this.gFox.getSize() * Math.sqrt(2))) <= tempThreshold)
                 && (this.gFox.getSize() >= 40))
                 && (this.gFox.TorpedoSalvoCount > 0)
+                // || (this.gFox.getSize() >= 55)
+                // && (this.gFox.TorpedoSalvoCount > 0)
+                )
         ) {
 
            if (this.gFox.TorpedoSalvoCount > 0
@@ -329,6 +366,7 @@ public class Data {
             nSuperFoodObject++;
         }
     }
+    
     private void checkThreatObject(GameObject other) {
         /* Deskripsi : Mengecek apakah ada threat object di sekitar threshold */
         /* F.S : GASCLOUD DAN ASTEROIDFIELD TERURUT MEMBESAR */
@@ -358,15 +396,15 @@ public class Data {
         }
     }
 
-
     private void checkThreatPlayer(GameObject other){
         /* Deskripsi: Mengecek Apakah ada player di sekitar threshold atau tidak 
          * F.S : threatPlayer atau Prey terurut berdasarkan distance
         */
 
-        Double distance;
-        distance = Statistic.getDistanceBetween(this.gFox, other);
+        Double distance = Statistic.getDistanceBetween(this.gFox, other);
+        // Double distanceFromCenter = Statistic.getDistanceBetween(other.getPosition(), gameState.getWorld().centerPoint);
 
+        // if (distanceFromCenter <= ) SUPERNOVA PICKUP
         if (distance < (thresholdThreatPlayer + other.getSize() * Math.sqrt(2))) {
             /* Player terurut berdasarkan distance */
             if ((other.getSize() - this.gFox.getSize()) > 0) {
@@ -408,8 +446,8 @@ public class Data {
                 }
                 nPreyObject++;
             }
-        } else if ((distance < (thresholdThreatPlayer + other.getSize() + (gameState.getWorld().getRadius()/10))) 
-                    && ((other.getSize() - gFox.getSize() + 10.0) < 0)) {
+        } else if ((distance < (thresholdThreatPlayer + other.getSize() + (gameState.getWorld().getRadius()/8.0f))) 
+                    && ((other.getSize() - gFox.getSize() + 20.0) < 0)) {
             if (this.nPreyObject == 0) {
                 preyObject.add(other);
                 preyObjectDistance.add(distance);
@@ -433,16 +471,15 @@ public class Data {
 
     private void checkEnemysTorpedo(GameObject other) {
         /* F.S : List Of Enemy's Torpedoes */
-        /* TODO : Cek Heading Enemy atau Bukan */
 
         Double distance;
         distance = Statistic.getDistanceBetween(this.gFox, other);
 
         /* Check Player Action nTorpedoes - torpedoesCount current */
 
-
-
-        if (distance < (350 + gFox.getSize() * Math.sqrt(2))) {
+        if (distance < (350 + gFox.getSize() * Math.sqrt(2)) 
+        && (((other.currentHeading - Statistic.getHeadingBetween(gFox, other) + 180) % 360) < 15)
+        && (((other.currentHeading - Statistic.getHeadingBetween(gFox, other) + 180) % 360) > -15) ) {
             if (other.getGameObjectType() == ObjectTypes.TORPEDOSALVOCOUNT) {
                 torpedoObject.add(0,other);
                 nEnemysTorpedo++;
@@ -471,7 +508,7 @@ public class Data {
         Double distance = radius - distanceselfCenter;
 
         /* Menentukan Kuadran */
-        if ((distance - (gFox.getSize() * (Math.sqrt(2) + 0.2f))) < (this.gameState.getWorld().getRadius()/10) + 30.0) {
+        if ((distance - (gFox.getSize() * (Math.sqrt(2) + 0.2f))) < (this.gameState.getWorld().getRadius()/13.0f) + 30.0) {
             /*Jika Border masuk threshold (dekat) anggap sebagai ancaman*/
              
             if (xSelf == 0) {
@@ -520,7 +557,7 @@ public class Data {
             }
             this.ancamanBorder = true;
             this.outsideBorder = false;
-        } else if (distance < 0) {
+        } else if ((distance - gFox.getSize() - 30) < 0) {
             this.outsideBorder = true;
             this.ancamanBorder = true;
         } else {
@@ -559,20 +596,43 @@ public class Data {
                         checkThreatObject(currentObject);
 
                     } else {
-
-                        checkEnemysTorpedo(currentObject);
-                    
+                        if (currentObject.getGameObjectType() == ObjectTypes.SUPERNOVAPICKUP){
+                            superNovaExist = true;
+                        } else {
+                            if (currentObject.getGameObjectType() == ObjectTypes.TELEPORTER) {
+                                Double radiusTeleporter = Statistic.getDistanceBetween(gameState.getWorld().getCenterPoint(), currentObject.getPosition());
+                                if (radiusTeleporter > (gameState.getWorld().getRadius() - (gFox.getSize() * Math.sqrt(2)))) {
+                                    teleportOutsideBorder = true;
+                                } else {
+                                    teleportOutsideBorder = false;
+                                }
+                            } else {
+                                checkEnemysTorpedo(currentObject);
+                            }
+                        }
                     }
                 }
             }
         }
 
         // Collecting Player Threat Data
-        for (i = 0; i < listPlayer.size(); i++) {
+        Integer nPlayer = listPlayer.size();
+        for (i = 0; i < nPlayer; i++) {
             if (listPlayer.get(i).id != this.gFox.id) { // Jika bukan diri sendiri, lakukan pengecekan
                 checkThreatPlayer(listPlayer.get(i));
+                if ((nPlayer == 2)
+                    &&
+                    ((nThreatPlayer == 0)
+                    || (nPreyObject == 0))) {
+                        teleportOneEnemy = true;
+                        preyObject.add(0,listPlayer.get(i));
+                        preyObjectDistance.add(0, Statistic.getDistanceBetween(gFox, listPlayer.get(i)));
+                        nPreyObject++;
+                    }
             }
         }
+
+        
 
         // Determine the Need for Defense Mode
         if ((this.nThreatObject + this.nThreatPlayer) > 0 || this.ancamanBorder) { // Jika terancam

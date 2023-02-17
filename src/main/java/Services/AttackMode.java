@@ -16,7 +16,7 @@ public class AttackMode {
     private GameObject other;
     private GameState gameState;
     private Double closePrey;
-    private final int closeTele = 20; // Jangan constant
+    private final int closeTele = 150; // Jangan constant
 
     // Method
     // Constructor
@@ -47,14 +47,9 @@ public class AttackMode {
     private void FireTorpedo() { gAction.action = PlayerActions.FIRETORPEDOES;}
     private void FireSuperNova() { gAction.action = PlayerActions.FIRESUPERNOVA;}
     private void DetonateSuperNova() { gAction.action = PlayerActions.DETONATESUPERNOVA;}
-    private void FireTeleport() {
-        gAction.action = PlayerActions.FIRETELEPORT;
-        System.out.println("MASUKKKKKKKKKKKKKKKKKKK");
+    private void FireTeleport() { gAction.action = PlayerActions.FIRETELEPORT; System.out.println("TEMBAK TELEPORTER");
     }
-    private void Teleport() {
-        gAction.action = PlayerActions.TELEPORT;
-        System.out.printf("KELUARRRRRRRRRRRRRRRRRRRRR");
-    }
+    private void Teleport() { gAction.action = PlayerActions.TELEPORT; System.out.printf("TELEPORT TO PREY");}
 
     public void resolveAttackMode() {
         choosePrey();
@@ -70,14 +65,45 @@ public class AttackMode {
         else
         {
             // StopAfterburner();
-            if ((gFox.getSize() - 40) > (prey.getSize() + 10)) {
+            if ((gFox.getSize() - 40) > (prey.getSize() + 10) ) {
 		    gAction.setHeading(Statistic.getHeadingBetween(gFox, prey));
             
-            if ((gFox.TeleporterCount > 0))  {
-                /* Teleport Mode */
-                Teleport();
-                gAction.setHeading(Statistic.getHeadingBetween(gFox, gameState.getWorld().getCenterPoint()));
-                System.out.println("Attack Mode Using Teleport");
+                if (((gFox.TeleporterCount > 0) && (Statistic.getDistanceBetween(gFox, prey) < closeTele))
+                    ||
+                    (((gFox.getSize()) > (prey.getSize() + 30) 
+                    && (dataAttack.isTeleportOneEnemy()) 
+                    && (gFox.TeleporterCount > 0)
+                    ))
+                    )  {
+                    /* Teleport Mode */
+                    if (!gameState.isFiredTeleport()){
+                        if (!gameState.isPrepTeleport()) {
+                            /* BELUM PREP TELEPORT */
+                            gAction.action = PlayerActions.FORWARD;
+                            gAction.setHeading(Statistic.getHeadingBetween(gFox, prey));
+                            gameState.setHeadingTeleport(gAction.getHeading());
+                        } else {          
+                            /* TEMBAK */
+                            FireTeleport();
+                            gameState.setPrepTeleport(false);
+                            gameState.setFiredTeleport(true);
+                        }
+                    } else {
+                        /* TELEPORT */
+
+                        /* BELUM DICEK APAKAH DISEKITAR PREY ADA ANCAMAN ATAU TIDAK */
+                        if (dataAttack.isTeleportOutsideBorder()){
+                            Teleport();
+                            gameState.setFiredTeleport(false);
+                            System.out.println("Attack Mode Using Teleport");
+                            gameState.setHeadingTeleport(-999);
+                        } else {
+                            go();
+                            System.out.println("Teleport Failed, Pursuit The Enemy");
+                        }
+                    }
+
+                } 
                 } else {
                 /* Pursuit Mode */
                 go();
@@ -85,7 +111,7 @@ public class AttackMode {
                 } 
             }
         }
-    }
+    
 
     // method memilih mangsa, apakah pilih yang terdekat dengan player atau terdekat dengan teleporter
     public void choosePrey() { 

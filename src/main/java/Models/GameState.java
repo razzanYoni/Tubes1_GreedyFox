@@ -10,6 +10,9 @@ public class GameState {
     public static boolean afterBurnerOn = false;
     public static boolean shieldActivated = false;
     public static double shieldTick;
+    public static boolean prepTeleport = false;
+    public static boolean FireTeleport = false;
+    public static Integer headingTeleport = -999;
 
     public GameState() {
         world = new World();
@@ -66,7 +69,6 @@ public class GameState {
     public void setShieldActivated() {
         shieldActivated = true;
         shieldTick = 0;
-        // shieldComplement = false;
     }
 
     public static void setShieldDeactivated() {
@@ -75,6 +77,27 @@ public class GameState {
             shieldActivated = false;
             shieldTick = 0;
         }
-        // shieldComplement = true;
     }
+
+    public static boolean isPrepTeleport() {
+        return prepTeleport;
+    }
+
+    public static void setPrepTeleport(boolean prepTele) {
+        prepTeleport = prepTele;
+    }
+
+    public static boolean isFiredTeleport() {
+        return FireTeleport;
+    }
+    public static void setFiredTeleport(boolean fireTele) {
+        FireTeleport = fireTele;
+    }
+    public static Integer getHeadingTeleport() {
+        return headingTeleport;
+    }
+    public static void setHeadingTeleport(Integer heading) {
+        headingTeleport = heading;
+    }
+
 }
