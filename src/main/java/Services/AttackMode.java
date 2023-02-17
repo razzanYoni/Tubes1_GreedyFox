@@ -92,7 +92,7 @@ public class AttackMode {
                         /* TELEPORT */
 
                         /* BELUM DICEK APAKAH DISEKITAR PREY ADA ANCAMAN ATAU TIDAK */
-                        if (dataAttack.isTeleportOutsideBorder()){
+                        if (!dataAttack.isTeleportOutsideBorder()){
                             Teleport();
                             gameState.setFiredTeleport(false);
                             System.out.println("Attack Mode Using Teleport");
