@@ -14,6 +14,6 @@ Galaxio adalah sebuah game battle royale yang mempertandingkan bot kapal anda de
 - MacOS
 
 ## Author 
-- Muhammad Fadhil Amri
-- Akmal Mahardika Nurwahyu Pratama
-- Razan Daksana Yoni
+- 13521066 Muhammad Fadhil Amri
+- 13521070 Akmal Mahardika Nurwahyu Pratama
+- 13521087 Razzan Daksana Yoni
